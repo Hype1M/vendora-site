@@ -245,7 +245,7 @@
       const fd=new FormData();
       fd.append("image1", file.files[0], file.files[0].name||"photo.png");
       fd.append("background", bg);
-      const r=await fetch(BACKEND+"/api/generate",{ method:"POST", body:fd });
+      const r=await fetch(BACKEND+"/generate",{ method:"POST", body:fd });
       const ct=r.headers.get("content-type")||"";
       if(!(r.ok && ct.indexOf("image/")===0)){
         let msg="Échec de la génération ("+r.status+").";
