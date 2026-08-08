@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Vendora.ai — Connexion</title>
+<meta name="robots" content="noindex" />
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#f4f5f7;--surface:#fff;--panel:#fafafa;--border:#eaeaec;--border-2:#e0e3ef;--hair:#f0f0f2;
+    --text:#0e0f13;--muted:#6b6d78;--faint:#9a9ca6;--brand:#2f6bff;
+    --font:"Plus Jakarta Sans",system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--font);font-weight:400;background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased;letter-spacing:-.011em;min-height:100vh;display:flex;flex-direction:column}
+  a{color:inherit;text-decoration:none}
+
+  .top{padding:22px 30px}
+  .logo{display:inline-flex;align-items:center;gap:9px;font-weight:700;font-size:18px}
+  .logo .mark{width:28px;height:28px;border-radius:8px;background:var(--text);display:grid;place-items:center}
+  .logo .mark svg{width:16px;height:16px}
+  .logo .ai{color:var(--faint);font-weight:600}
+
+  .center{flex:1;display:grid;place-items:center;padding:20px}
+  .card{width:100%;max-width:400px;background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:34px;box-shadow:0 1px 2px rgba(14,15,19,.04),0 20px 50px -30px rgba(14,15,19,.35)}
+  .card h1{font-size:22px;font-weight:700;letter-spacing:-.02em;text-align:center;margin-bottom:6px}
+  .card .lead{text-align:center;color:var(--muted);font-size:14px;margin-bottom:24px}
+
+  .tabs{display:flex;background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:4px;margin-bottom:22px}
+  .tab{flex:1;text-align:center;padding:9px;border-radius:7px;font-weight:600;font-size:14px;color:var(--muted);cursor:pointer;transition:.15s;border:none;background:none;font-family:var(--font)}
+  .tab.active{background:#fff;color:var(--text);box-shadow:0 1px 2px rgba(14,15,19,.08)}
+
+  .gbtn{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;border:1px solid var(--border-2);background:#fff;border-radius:10px;padding:12px;font-family:var(--font);font-weight:600;font-size:14.5px;cursor:pointer;transition:.15s}
+  .gbtn:hover{background:var(--panel)}
+  .gbtn svg{width:18px;height:18px}
+  .sep{display:flex;align-items:center;gap:12px;color:var(--faint);font-size:12px;margin:18px 0}
+  .sep::before,.sep::after{content:"";flex:1;height:1px;background:var(--hair)}
+
+  label{display:block;font-size:13px;font-weight:600;color:var(--muted);margin:0 0 7px}
+  .field{margin-bottom:16px}
+  input{width:100%;font-family:var(--font);font-size:15px;padding:12px 14px;border:1px solid var(--border-2);border-radius:10px;background:#fff;outline:none;transition:.15s}
+  input:focus{border-color:var(--text)}
+  .submit{width:100%;background:var(--text);color:#fff;border:none;border-radius:10px;padding:13px;font-family:var(--font);font-weight:600;font-size:15px;cursor:pointer;transition:.15s;margin-top:4px}
+  .submit:hover{background:#25262c}
+  .fine{text-align:center;color:var(--faint);font-size:12px;margin-top:16px}
+  .fine a{color:var(--muted);text-decoration:underline}
+  .switch{text-align:center;font-size:13.5px;color:var(--muted);margin-top:18px}
+  .switch a{color:var(--text);font-weight:600;cursor:pointer}
+  .back{display:inline-flex;align-items:center;gap:6px;color:var(--muted);font-size:13px;margin-top:22px}
+  .back:hover{color:var(--text)}
+  .back svg{width:15px;height:15px}
+  .name-field{display:none}
+  body.signup .name-field{display:block}
+</style>
+</head>
+<body>
+  <div class="top">
+    <a class="logo" href="index.html">
+      <span class="mark"><svg viewBox="0 0 24 24" fill="none"><path d="M6 7l6 10.5L18 7" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="18.6" cy="5.4" r="1.7" fill="#5b8cff"/></svg></span>
+      <span>Vendora<span class="ai">.ai</span></span>
+    </a>
+  </div>
+
+  <div class="center">
+    <div style="width:100%;max-width:400px">
+      <div class="card">
+        <h1 id="title">Bon retour 👋</h1>
+        <p class="lead" id="lead">Connecte-toi pour améliorer tes photos.</p>
+
+        <div class="tabs">
+          <button class="tab active" id="tab-login">Connexion</button>
+          <button class="tab" id="tab-signup">Inscription</button>
+        </div>
+
+        <button class="gbtn" onclick="go()">
+          <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.5 12.2c0-.7-.1-1.4-.2-2H12v3.8h5.9a5 5 0 0 1-2.2 3.3v2.7h3.6c2.1-1.9 3.2-4.8 3.2-7.8Z"/><path fill="#34A853" d="M12 23c2.9 0 5.4-1 7.2-2.6l-3.6-2.7c-1 .7-2.3 1.1-3.6 1.1-2.8 0-5.1-1.9-6-4.4H2.3v2.8A11 11 0 0 0 12 23Z"/><path fill="#FBBC05" d="M6 14.3a6.6 6.6 0 0 1 0-4.2V7.3H2.3a11 11 0 0 0 0 9.8L6 14.3Z"/><path fill="#EA4335" d="M12 5.4c1.6 0 3 .5 4.1 1.6l3.1-3.1A11 11 0 0 0 2.3 7.3L6 10.1c.9-2.6 3.2-4.7 6-4.7Z"/></svg>
+          Continuer avec Google
+        </button>
+
+        <div class="sep">ou</div>
+
+        <form onsubmit="submitForm(event)">
+          <div class="field name-field">
+            <label>Nom</label>
+            <input type="text" placeholder="Ton nom" />
+          </div>
+          <div class="field">
+            <label>E-mail</label>
+            <input type="email" placeholder="toi@exemple.com" required />
+          </div>
+          <div class="field">
+            <label>Mot de passe</label>
+            <input type="password" placeholder="••••••••" required minlength="6" />
+          </div>
+          <button class="submit" id="submitBtn" type="submit">Se connecter</button>
+        </form>
+
+        <p class="fine" id="fine"></p>
+
+        <p class="switch" id="switch">Pas encore de compte ? <a onclick="setMode('signup')">Inscris-toi</a></p>
+      </div>
+
+      <div style="text-align:center">
+        <a class="back" href="index.html"><svg viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> Retour à l'accueil</a>
+      </div>
+    </div>
+  </div>
+
+<script>
+  function setMode(mode){
+    const signup = mode==="signup";
+    document.body.classList.toggle("signup", signup);
+    document.getElementById("tab-login").classList.toggle("active", !signup);
+    document.getElementById("tab-signup").classList.toggle("active", signup);
+    document.getElementById("title").textContent = signup ? "Crée ton compte" : "Bon retour 👋";
+    document.getElementById("lead").textContent = signup ? "Inscris-toi pour commencer à améliorer tes photos." : "Connecte-toi pour améliorer tes photos.";
+    document.getElementById("submitBtn").textContent = signup ? "Créer mon compte" : "Se connecter";
+    document.getElementById("switch").innerHTML = signup
+      ? 'Déjà un compte ? <a onclick="setMode(\'login\')">Connecte-toi</a>'
+      : 'Pas encore de compte ? <a onclick="setMode(\'signup\')">Inscris-toi</a>';
+    document.getElementById("fine").innerHTML = signup
+      ? 'En continuant, tu acceptes les <a href="#">Conditions</a> et la <a href="#">Confidentialité</a>.' : '';
+  }
+  document.getElementById("tab-login").onclick=()=>setMode("login");
+  document.getElementById("tab-signup").onclick=()=>setMode("signup");
+  // pré-sélection via ?mode=signup
+  if(new URLSearchParams(location.search).get("mode")==="signup") setMode("signup");
+  /* ---------- Supabase ---------- */
+  const SUPABASE_URL = "https://zipzllczqfcfvyydvmpy.supabase.co";
+  const SUPABASE_ANON_KEY = "sb_publishable_ujJAZvyLdjDzFSWbwBguWw_f0yIMJvs";
+  const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  // déjà connecté ? → direct vers l'outil
+  sb.auth.getSession().then(({data})=>{ if(data.session){ cacheUser(data.session.user); window.location.href="app.html"; } });
+
+  function cacheUser(u){
+    const name = (u.user_metadata && (u.user_metadata.name || u.user_metadata.full_name)) || (u.email ? u.email.split("@")[0] : "Mon compte");
+    localStorage.setItem("vendora_user", JSON.stringify({ id:u.id, name:name, email:u.email||"" }));
+  }
+  function setBusy(b){ const btn=document.getElementById("submitBtn"); btn.disabled=b; btn.style.opacity=b?.6:1; }
+  function showError(msg){
+    let el=document.getElementById("authError");
+    if(!el){ el=document.createElement("p"); el.id="authError"; el.style.cssText="color:#e5484d;font-size:13px;text-align:center;margin-top:14px"; document.getElementById("fine").before(el); }
+    el.textContent=msg;
+  }
+
+  async function go(){ // Google
+    showError("");
+    try{
+      const redirectTo = location.origin + location.pathname.replace(/auth\.html$/, "app.html");
+      const { data, error } = await sb.auth.signInWithOAuth({ provider:"google", options:{ redirectTo } });
+      if(error) throw error;
+      if(data && data.url) window.location.href = data.url; // force la redirection si pas automatique
+    }catch(err){
+      showError((err.message||"Connexion Google indisponible.") + " — active le provider Google dans Supabase (Authentication → Providers).");
+    }
+  }
+
+  async function submitForm(e){
+    e.preventDefault();
+    const signup = document.body.classList.contains("signup");
+    const inputs = e.target.querySelectorAll("input"); // [0]=nom (masqué en connexion), [1]=email, [2]=mdp
+    const name = inputs[0].value.trim();
+    const email = inputs[1].value.trim();
+    const password = inputs[2].value;
+    setBusy(true); showError("");
+    try{
+      if(signup){
+        const { data, error } = await sb.auth.signUp({ email, password, options:{ data:{ name: name || email.split("@")[0] } } });
+        if(error) throw error;
+        if(data.session){ cacheUser(data.session.user); window.location.href="app.html"; return; }
+        // pas de session (confirmation e-mail activée) → on tente une connexion directe
+        const { data: d2, error: e2 } = await sb.auth.signInWithPassword({ email, password });
+        if(d2 && d2.session){ cacheUser(d2.user); window.location.href="app.html"; return; }
+        showError("Compte créé ✅ Confirme ton e-mail pour te connecter (ou désactive la confirmation dans Supabase).");
+        setMode("login");
+      } else {
+        const { data, error } = await sb.auth.signInWithPassword({ email, password });
+        if(error) throw error;
+        cacheUser(data.user); window.location.href="app.html";
+      }
+    } catch(err){ showError(err.message || "Erreur de connexion."); }
+    finally{ setBusy(false); }
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Vendora.ai — Retouche photo IA pour vendre plus vite sur Vinted</title>
+<meta name="description" content="Vendora.ai améliore automatiquement tes photos d'articles : fond épuré, lumière parfaite, couleurs fidèles. Vends plus vite sur Vinted, Vestiaire et Depop." />
+<meta name="keywords" content="retouche photo vinted, améliorer photo vinted, photo article vinted, fond blanc vinted, vendre vinted, photo vestiaire collective, retouche ia" />
+<meta name="robots" content="index, follow, max-image-preview:large" />
+<meta name="theme-color" content="#2f6bff" />
+<link rel="canonical" href="https://vendora.ai/" />
+
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="Vendora.ai" />
+<meta property="og:title" content="Vendora.ai — Retouche photo IA pour vendre plus vite" />
+<meta property="og:description" content="Améliore tes photos d'articles en un clic : fond épuré, lumière parfaite, couleurs fidèles." />
+<meta property="og:url" content="https://vendora.ai/" />
+<meta property="og:image" content="https://vendora.ai/og-image.png" />
+<meta name="twitter:card" content="summary_large_image" />
+
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org","@type":"WebApplication","name":"Vendora.ai",
+  "url":"https://vendora.ai/","applicationCategory":"PhotographyApplication","operatingSystem":"Web",
+  "description":"Retouche photo par IA pour les vendeurs Vinted, Vestiaire et Depop.",
+  "offers":{"@type":"Offer","price":"0","priceCurrency":"EUR"}
+}
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#f4f5f7;
+    --panel:#fafafa;
+    --border:#ebeb ;
+    --border:#eaeaec;
+    --hair:#f0f0f2;
+    --text:#0e0f13;
+    --muted:#6b6d78;
+    --faint:#9a9ca6;
+    --brand:#2f6bff;
+    --font:"Plus Jakarta Sans",system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:var(--font);font-weight:400;background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased;letter-spacing:-.011em}
+  a{color:inherit;text-decoration:none}
+  .wrap{width:min(1000px,88%);margin-inline:auto}
+
+  /* nav — floating */
+  header{position:sticky;top:14px;z-index:50;margin-top:14px}
+  .nav{display:flex;align-items:center;justify-content:space-between;height:56px;padding:0 10px 0 18px;
+    background:rgba(255,255,255,.75);backdrop-filter:blur(16px) saturate(180%);
+    border:1px solid var(--border);border-radius:16px;
+    box-shadow:0 1px 2px rgba(14,15,19,.04),0 12px 28px -18px rgba(14,15,19,.25)}
+  .logo{display:flex;align-items:center;gap:9px;font-weight:700;font-size:18px}
+  .logo .mark{width:28px;height:28px;border-radius:8px;background:var(--text);display:grid;place-items:center}
+  .logo .mark svg{width:16px;height:16px}
+  .logo .ai{color:var(--faint);font-weight:600}
+  .nav-links{display:flex;gap:32px}
+  .nav-links a{color:var(--muted);font-weight:500;font-size:14.5px;transition:color .15s}
+  .nav-links a:hover{color:var(--text)}
+  .nav-right{display:flex;align-items:center;gap:18px}
+  .lang-btn{display:flex;align-items:center;gap:6px;background:none;border:none;cursor:pointer;font-family:var(--font);font-weight:500;font-size:14px;color:var(--muted)}
+  .lang-btn:hover{color:var(--text)}
+  .lang-btn svg{width:16px;height:16px}
+  @media(max-width:760px){.nav-links,.lang-wrap{display:none}}
+
+  .btn{font-family:var(--font);font-weight:600;font-size:14.5px;cursor:pointer;border:none;border-radius:8px;padding:10px 18px;transition:background .15s,border-color .15s,color .15s}
+  .btn-primary{background:var(--text);color:#fff}
+  .btn-primary:hover{background:#25262c}
+  .btn-line{background:#fff;color:var(--text);border:1px solid var(--border)}
+  .btn-line:hover{border-color:var(--faint)}
+
+  /* hero */
+  .hero{padding:180px 0 110px;text-align:center}
+  .eyebrow{font-size:13px;font-weight:600;color:var(--muted);letter-spacing:.02em;margin-bottom:32px}
+  .eyebrow .k{color:var(--brand)}
+  h1{font-weight:700;letter-spacing:-.035em;line-height:1.06;font-size:clamp(36px,5vw,58px);margin-bottom:30px}
+  .sub{color:var(--muted);font-weight:400;font-size:clamp(16px,1.6vw,18px);max-width:520px;margin:0 auto 48px}
+  .hero-actions{display:flex;gap:14px;justify-content:center;align-items:center}
+  .hero-actions .btn{padding:13px 24px;font-size:15px}
+  .hero-note{margin-top:18px;font-size:13px;color:var(--faint)}
+
+  /* import + background tool */
+  .tool{max-width:520px;margin:0 auto;background:#fff;border:1px solid var(--border);border-radius:16px;padding:16px;text-align:left;box-shadow:0 1px 2px rgba(14,15,19,.04),0 18px 40px -28px rgba(14,15,19,.3)}
+  .drop{display:flex;align-items:center;gap:14px;border:1.5px dashed var(--border-2);border-radius:12px;padding:18px;cursor:pointer;transition:.15s}
+  .drop:hover,.drop.drag{border-color:var(--text);background:var(--panel)}
+  .drop-ic{width:44px;height:44px;border-radius:10px;background:var(--text);display:grid;place-items:center;flex-shrink:0}
+  .drop-ic svg{width:22px;height:22px;color:#fff}
+  .drop-txt b{display:block;font-weight:600;font-size:15px}
+  .drop-txt span{color:var(--muted);font-size:13px}
+  .drop-txt .fname{color:var(--brand)}
+  .bgpick{margin-top:18px}
+  .bgpick-label{font-size:13px;font-weight:600;color:var(--muted);display:block;margin-bottom:10px}
+  .bgs{display:flex;flex-wrap:wrap;gap:8px}
+  .bg{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--border);border-radius:999px;padding:7px 13px 7px 7px;font-family:var(--font);font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;transition:.15s}
+  .bg:hover{color:var(--text);border-color:var(--faint)}
+  .bg.active{border-color:var(--text);color:var(--text)}
+  .bg .sw{width:18px;height:18px;border-radius:6px;border:1px solid var(--border-2)}
+  .tool-go{width:100%;margin-top:18px}
+
+  /* before/after */
+  .compare-wrap{max-width:440px;margin:150px auto 0}
+  .compare{position:relative;aspect-ratio:4/5;border-radius:14px;overflow:hidden;border:1px solid var(--border);user-select:none;touch-action:none}
+  .compare .pane{position:absolute;inset:0;background-size:cover;background-position:center}
+  .compare .before{background-image:url("before.jpg")}
+  .compare .after{background-image:url("after.jpg");clip-path:inset(0 0 0 var(--pos,50%))}
+  .compare .lbl{position:absolute;top:12px;font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:5px 10px;border-radius:6px}
+  .compare .lbl-b{left:12px;background:rgba(0,0,0,.45);color:#fff}
+  .compare .lbl-a{right:12px;background:#fff;color:var(--text);border:1px solid var(--border)}
+  .compare .handle{position:absolute;top:0;bottom:0;left:var(--pos,50%);width:1px;background:#fff;z-index:4;box-shadow:0 0 0 1px rgba(0,0,0,.06)}
+  .compare .grip{position:absolute;top:50%;left:var(--pos,50%);transform:translate(-50%,-50%);width:38px;height:38px;border-radius:50%;background:#fff;border:1px solid var(--border);display:grid;place-items:center;z-index:5;cursor:ew-resize;box-shadow:0 4px 12px rgba(0,0,0,.1)}
+  .compare .grip svg{width:18px;height:18px;color:var(--text)}
+  .compare input[type=range]{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:ew-resize;z-index:6;margin:0}
+  .compare-cap{text-align:center;color:var(--faint);font-size:13px;margin-top:14px}
+
+  /* sections */
+  section{padding:128px 0;border-top:1px solid var(--hair)}
+  .sec-head{max-width:560px;margin:0 auto 72px;text-align:center}
+  .sec-head h2{font-weight:700;font-size:clamp(26px,3.2vw,34px);letter-spacing:-.03em;margin-bottom:12px}
+  .sec-head p{color:var(--muted);font-size:16px}
+
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border:1px solid var(--border);border-radius:14px;overflow:hidden;background:#fff}
+  .step{padding:42px 36px;border-right:1px solid var(--hair)}
+  .step:last-child{border-right:none}
+  .step .num{font-size:13px;font-weight:600;color:var(--faint);margin-bottom:22px}
+  .step h3{font-weight:600;font-size:17px;margin-bottom:8px}
+  .step p{color:var(--muted);font-size:14.5px}
+  @media(max-width:760px){.steps{grid-template-columns:1fr}.step{border-right:none;border-bottom:1px solid var(--hair)}.step:last-child{border-bottom:none}}
+
+  .feats{display:grid;grid-template-columns:repeat(3,1fr);gap:48px 40px}
+  .feat .ic{width:38px;height:38px;border-radius:9px;border:1px solid var(--border);background:#fff;display:grid;place-items:center;margin-bottom:16px}
+  .feat .ic svg{width:19px;height:19px;color:var(--text)}
+  .feat h3{font-weight:600;font-size:16px;margin-bottom:6px}
+  .feat p{color:var(--muted);font-size:14px}
+  @media(max-width:760px){.feats{grid-template-columns:1fr 1fr;gap:32px 24px}}
+  @media(max-width:480px){.feats{grid-template-columns:1fr}}
+
+  /* pricing */
+  .plans{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;max-width:900px;margin:0 auto;align-items:stretch}
+  .plan{border:1px solid var(--border);border-radius:14px;padding:32px;background:#fff;display:flex;flex-direction:column;position:relative}
+  .plan.pro{border-color:var(--text)}
+  .plan .ptop{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+  .plan h3{font-weight:600;font-size:16px}
+  .plan .tag{font-size:11px;font-weight:600;color:var(--brand);border:1px solid #cfe0ff;background:#f2f6ff;padding:3px 9px;border-radius:999px}
+  .plan .ptagline{color:var(--muted);font-size:13px;min-height:18px}
+  .plan .price{font-weight:700;font-size:38px;letter-spacing:-.03em;margin:10px 0 2px}
+  .plan .price small{font-size:14px;font-weight:500;color:var(--faint)}
+  .plan ul{list-style:none;margin:22px 0 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+  .plan li{display:flex;gap:10px;align-items:flex-start;font-size:14px;color:var(--muted)}
+  .plan li svg{width:17px;height:17px;color:var(--text);flex-shrink:0;margin-top:2px}
+  .plan .btn{width:100%;text-align:center}
+  @media(max-width:760px){.plans{grid-template-columns:1fr;max-width:400px}}
+
+  /* article */
+  .article{max-width:680px;margin:0 auto}
+  .article h2{font-weight:700;font-size:clamp(24px,3vw,32px);letter-spacing:-.03em;margin-bottom:18px}
+  .article h3{font-weight:600;font-size:18px;margin:30px 0 8px}
+  .article p{color:var(--muted);font-size:15.5px;margin-bottom:12px}
+  .article strong{color:var(--text);font-weight:600}
+
+  /* faq */
+  .faq{max-width:680px;margin:0 auto}
+  .faq-item{border-bottom:1px solid var(--hair)}
+  .faq-item summary{list-style:none;cursor:pointer;font-weight:600;font-size:16px;padding:22px 0;display:flex;justify-content:space-between;align-items:center;gap:16px}
+  .faq-item summary::-webkit-details-marker{display:none}
+  .faq-item summary::after{content:"+";font-size:20px;color:var(--faint);font-weight:400}
+  .faq-item[open] summary::after{content:"–"}
+  .faq-item p{color:var(--muted);font-size:14.5px;padding:0 0 22px;max-width:600px}
+
+  /* cta */
+  .cta{text-align:center;padding:96px 0}
+  .cta h2{font-weight:700;font-size:clamp(26px,3.4vw,38px);letter-spacing:-.03em;margin-bottom:14px}
+  .cta p{color:var(--muted);margin-bottom:28px;font-size:16px}
+
+  footer{border-top:1px solid var(--hair);padding:36px 0}
+  .foot{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:18px;color:var(--faint);font-size:13.5px}
+  .foot-links{display:flex;gap:22px}
+  .foot-links a:hover{color:var(--text)}
+  .disclaimer{color:var(--faint);font-size:12px;margin-top:18px;max-width:620px}
+
+  /* logged-in account in nav */
+  .authbox{display:flex;align-items:center;gap:12px}
+  .credits{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:500;color:var(--muted);background:var(--surface);border:1px solid var(--border);border-radius:999px;padding:7px 13px}
+  .credits svg{width:15px;height:15px;color:var(--brand)}
+  .credits b{color:var(--text);font-weight:700}
+  .account{position:relative}
+  .acct-btn{display:flex;align-items:center;gap:9px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:5px 11px 5px 5px;cursor:pointer;font-family:var(--font);transition:border-color .15s,background .15s}
+  .acct-btn:hover{border-color:var(--faint);background:var(--panel)}
+  .avatar{width:30px;height:30px;border-radius:8px;background:var(--text);color:#fff;display:grid;place-items:center;font-weight:700;font-size:13px;flex-shrink:0}
+  .avatar.sm{width:34px;height:34px;border-radius:9px;font-size:14px}
+  .acct-info{display:flex;flex-direction:column;align-items:flex-start;line-height:1.15}
+  .acct-name{font-weight:600;font-size:13.5px;color:var(--text)}
+  .acct-cr{font-size:11.5px;color:var(--muted)}
+  .acct-cr{font-size:13.5px;font-weight:600;color:var(--text)}
+  .acct-cr b{color:var(--text);font-weight:700}
+  .acct-chev{width:15px;height:15px;color:var(--faint);transition:transform .15s}
+  .account.open .acct-chev{transform:rotate(180deg)}
+  .acct-menu{position:absolute;top:calc(100% + 10px);right:0;min-width:230px;background:var(--surface);border:1px solid var(--border);border-radius:12px;box-shadow:0 16px 40px -16px rgba(14,15,19,.3);padding:6px;opacity:0;visibility:hidden;transform:translateY(-6px);transition:.16s;z-index:60}
+  .account.open .acct-menu{opacity:1;visibility:visible;transform:translateY(0)}
+  .acct-head{display:flex;align-items:center;gap:10px;padding:10px 12px 12px;border-bottom:1px solid var(--hair);margin-bottom:6px}
+  .acct-head b{display:block;font-size:14px;font-weight:600}
+  .acct-head span{color:var(--muted);font-size:12.5px}
+  .acct-menu a{display:block;padding:10px 12px;border-radius:9px;font-size:14px;color:var(--text);font-weight:500}
+  .acct-menu a:hover{background:var(--panel)}
+  @media(max-width:600px){.acct-name,.credits{display:none}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a class="logo" href="#">
+      <span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M6 7l6 10.5L18 7" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="18.6" cy="5.4" r="1.7" fill="#5b8cff"/></svg></span>
+      <span>Vendora<span class="ai">.ai</span></span>
+    </a>
+    <nav class="nav-links">
+      <a href="#how">Comment ça marche</a>
+      <a href="#features">Fonctionnalités</a>
+      <a href="#pricing">Tarifs</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <div class="nav-right">
+      <div class="lang-wrap"><button class="lang-btn" id="langBtn"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.7"/><path d="M3 12h18M12 3c2.5 2.4 3.8 5.6 3.8 9S14.5 18.6 12 21c-2.5-2.4-3.8-5.6-3.8-9S9.5 5.4 12 3Z" stroke="currentColor" stroke-width="1.7"/></svg><span id="langLabel">FR</span></button></div>
+      <a class="btn btn-primary" id="tryBtn" href="auth.html">Essayer</a>
+      <div class="authbox" id="authbox" style="display:none">
+        <div class="account" id="account">
+          <button class="acct-btn" id="acctBtn"><span class="avatar" id="navAvatar">T</span><span class="acct-cr"><b id="navCredits">120</b> crédits</span><svg class="acct-chev" viewBox="0 0 24 24" fill="none"><path d="m6 9 6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <div class="acct-menu" id="acctMenu">
+            <div class="acct-head"><span class="avatar sm" id="navAvatar2">T</span><div><b id="menuName">Thomas</b><span id="menuMail">thomas@exemple.com</span></div></div>
+            <a href="app.html">Améliorer une photo</a>
+            <a href="#pricing">Mes crédits & facturation</a>
+            <a href="#" id="logout">Déconnexion</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="hero" style="border-top:none">
+    <div class="wrap">
+      <p class="eyebrow">Retouche photo IA · <span class="k">Vinted, Vestiaire, Depop</span></p>
+      <h1>Des photos qui font vendre<span style="color:var(--brand)">.</span></h1>
+      <p class="sub">Vendora améliore automatiquement tes photos d'articles : fond épuré, lumière juste, couleurs fidèles. En un clic.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="auth.html">Commencer</a>
+        <a class="btn btn-line" href="#how">Voir comment</a>
+      </div>
+      <p class="hero-note">Résultat en quelques secondes · export HD · sans filigrane</p>
+
+      <div class="compare-wrap">
+        <div class="compare" id="compare" style="--pos:50%">
+          <div class="pane before"><span class="lbl lbl-b">Avant</span></div>
+          <div class="pane after"><span class="lbl lbl-a">Après</span></div>
+          <div class="handle"></div>
+          <div class="grip"><svg viewBox="0 0 24 24" fill="none"><path d="M8 7 4 12l4 5M16 7l4 5-4 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <input type="range" min="0" max="100" value="50" id="slider" aria-label="Comparer avant après" />
+        </div>
+        <p class="compare-cap">Glisse pour comparer</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="how">
+    <div class="wrap">
+      <div class="sec-head"><h2>Trois étapes</h2><p>De la photo brute à l'annonce parfaite en quelques secondes.</p></div>
+      <div class="steps">
+        <div class="step"><div class="num">01</div><h3>Importe ta photo</h3><p>Depuis ton téléphone ou ton ordinateur.</p></div>
+        <div class="step"><div class="num">02</div><h3>L'IA améliore tout</h3><p>Fond nettoyé, lumière et couleurs corrigées.</p></div>
+        <div class="step"><div class="num">03</div><h3>Publie et vends</h3><p>Télécharge et poste directement sur Vinted.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="features">
+    <div class="wrap">
+      <div class="sec-head"><h2>Ce que fait Vendora</h2><p>Des outils pensés pour les vendeurs de seconde main.</p></div>
+      <div class="feats">
+        <div class="feat"><div class="ic"><svg viewBox="0 0 24 24" fill="none"><path d="M3 16 8 11l4 4 3-3 5 5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><rect x="3" y="4" width="18" height="16" rx="3" stroke="currentColor" stroke-width="1.7"/></svg></div><h3>Fond épuré</h3><p>Supprime l'arrière-plan encombré, pose l'article sur un fond propre.</p></div>
+        <div class="feat"><div class="ic"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.7"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5 19 19M19 5l-1.5 1.5M6.5 17.5 5 19" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></div><h3>Lumière juste</h3><p>Corrige les photos sombres ou jaunes prises à la maison.</p></div>
+        <div class="feat"><div class="ic"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3a9 9 0 1 0 0 18c1 0 1.5-.8 1.5-1.5 0-1 .8-1.5 1.5-1.5H18a3 3 0 0 0 3-3c0-5-4-9-9-9Z" stroke="currentColor" stroke-width="1.7"/><circle cx="7.5" cy="11" r="1" fill="currentColor"/><circle cx="12" cy="8" r="1" fill="currentColor"/><circle cx="16" cy="11" r="1" fill="currentColor"/></svg></div><h3>Couleurs fidèles</h3><p>La couleur affichée = la couleur reçue. Moins de retours.</p></div>
+        <div class="feat"><div class="ic"><svg viewBox="0 0 24 24" fill="none"><rect x="4" y="4" width="16" height="16" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="M4 9h4V4M20 15h-4v5" stroke="currentColor" stroke-width="1.7"/></svg></div><h3>Format optimisé</h3><p>Recadrage automatique au bon ratio pour chaque plateforme.</p></div>
+        <div class="feat"><div class="ic"><svg viewBox="0 0 24 24" fill="none"><path d="M13 3 4 14h7l-1 7 9-11h-7l1-7Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg></div><h3>Traitement par lot</h3><p>Améliore tout un dressing d'un coup, pas photo par photo.</p></div>
+        <div class="feat"><div class="ic"><svg viewBox="0 0 24 24" fill="none"><rect x="7" y="3" width="10" height="18" rx="2.5" stroke="currentColor" stroke-width="1.7"/><path d="M11 18h2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></div><h3>100% mobile</h3><p>Fonctionne dans ton navigateur, aucune application à installer.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="pricing">
+    <div class="wrap">
+      <div class="sec-head"><h2>Tarifs</h2><p>Choisis le forfait adapté à ton volume de ventes.</p></div>
+      <div class="plans">
+        <div class="plan">
+          <div class="ptop"><h3>Découverte</h3></div>
+          <div class="ptagline">&nbsp;</div>
+          <div class="price">9,90€<small> /mois</small></div>
+          <ul>
+            <li><svg viewBox="0 0 24 24" fill="none"><path d="M20 6 9 17l-5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> 2 000 crédits / mois</li>
+          </ul>
+          <a class="btn btn-line" href="auth.html">Choisir</a>
+        </div>
+        <div class="plan pro">
+          <div class="ptop"><h3>Essentiel</h3><span class="tag">Populaire</span></div>
+          <div class="ptagline">&nbsp;</div>
+          <div class="price">19,90€<small> /mois</small></div>
+          <ul>
+            <li><svg viewBox="0 0 24 24" fill="none"><path d="M20 6 9 17l-5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> 5 000 crédits / mois</li>
+          </ul>
+          <a class="btn btn-primary" href="auth.html">Choisir</a>
+        </div>
+        <div class="plan">
+          <div class="ptop"><h3>Ultimate</h3></div>
+          <div class="ptagline">Pour les créateurs sans limites</div>
+          <div class="price">39,90€<small> /mois</small></div>
+          <ul>
+            <li><svg viewBox="0 0 24 24" fill="none"><path d="M20 6 9 17l-5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> Crédits illimités / mois</li>
+          </ul>
+          <a class="btn btn-line" href="auth.html">Choisir</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="guide">
+    <div class="wrap">
+      <div class="article">
+        <h2>Réussir ses photos d'articles sur Vinted</h2>
+        <p>Sur Vinted, Vestiaire Collective ou Depop, la <strong>première photo décide tout</strong>. Un visuel net, lumineux et bien cadré attire plus de vues, inspire confiance et fait grimper le prix de vente.</p>
+        <h3>Pourquoi la qualité photo change tout</h3>
+        <p>Les articles avec de belles photos se vendent en moyenne <strong>plus vite et plus cher</strong>. Une photo sombre est ignorée dans le flux ; une photo claire sur fond épuré déclenche le clic.</p>
+        <h3>Ce que Vendora améliore</h3>
+        <p>L'IA détecte l'article, <strong>nettoie l'arrière-plan</strong>, rééquilibre la lumière, ravive les couleurs et recadre au bon format. Tu n'as rien à régler.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq">
+    <div class="wrap">
+      <div class="sec-head"><h2>Questions fréquentes</h2></div>
+      <div class="faq">
+        <details class="faq-item" open><summary>Comment améliorer mes photos pour Vinted ?</summary><p>Importe ta photo, choisis un style et télécharge le résultat en quelques secondes.</p></details>
+        <details class="faq-item"><summary>Comment fonctionnent les crédits ?</summary><p>Chaque forfait inclut un nombre de crédits par mois : 1 crédit = 1 photo améliorée. Tu choisis le forfait adapté à ton volume, à partir de 9,90€/mois.</p></details>
+        <details class="faq-item"><summary>Mes couleurs seront-elles fidèles ?</summary><p>Oui. Vendora ravive la photo tout en respectant la teinte réelle de l'article.</p></details>
+        <details class="faq-item"><summary>Est-ce que ça marche sur mobile ?</summary><p>Parfaitement. Tout se passe dans le navigateur, aucune application à installer.</p></details>
+        <details class="faq-item"><summary>Sur quelles plateformes puis-je utiliser les photos ?</summary><p>Vinted, Vestiaire Collective, Depop, Leboncoin, eBay, ou tes réseaux sociaux.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <div class="wrap">
+    <div class="cta">
+      <h2>Prêt à vendre plus vite ?</h2>
+      <p>Choisis ton forfait et améliore tes photos en un clic.</p>
+      <a class="btn btn-primary" style="padding:13px 26px;font-size:15px" href="auth.html">Commencer</a>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <a class="logo" href="#" style="font-size:16px"><span class="mark" style="width:24px;height:24px"><svg viewBox="0 0 24 24" fill="none"><path d="M6 7l6 10.5L18 7" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="18.6" cy="5.4" r="1.7" fill="#5b8cff"/></svg></span> Vendora<span class="ai">.ai</span></a>
+      <div class="foot-links"><a href="#pricing">Tarifs</a><a href="#faq">FAQ</a><a href="#">Confidentialité</a><a href="#">Contact</a></div>
+      <div>© 2026 Vendora.ai</div>
+    </div>
+    <p class="disclaimer">Vendora.ai n'est pas affilié à Vinted, Vestiaire Collective ou Depop. Ces marques sont citées à titre d'exemple d'usage.</p>
+  </div>
+</footer>
+
+<script>
+  const slider=document.getElementById("slider"),compare=document.getElementById("compare");
+  slider.addEventListener("input",()=>compare.style.setProperty("--pos",slider.value+"%"));
+
+  // état connecté persistant via Supabase
+  const SUPABASE_URL = "https://zipzllczqfcfvyydvmpy.supabase.co";
+  const SUPABASE_ANON_KEY = "sb_publishable_ujJAZvyLdjDzFSWbwBguWw_f0yIMJvs";
+  const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  function showLoggedIn(u){
+    const name = (u.user_metadata && (u.user_metadata.name || u.user_metadata.full_name)) || (u.email ? u.email.split("@")[0] : "Mon compte");
+    const initial = name.trim().charAt(0).toUpperCase();
+    document.getElementById("tryBtn").style.display="none";
+    document.getElementById("authbox").style.display="flex";
+    document.getElementById("navAvatar").textContent=initial;
+    document.getElementById("navAvatar2").textContent=initial;
+    document.getElementById("menuName").textContent=name;
+    document.getElementById("menuMail").textContent=u.email||"";
+    // si connecté, les CTA mènent direct à l'outil
+    document.querySelectorAll('a[href="auth.html"]').forEach(a=>a.setAttribute("href","app.html"));
+    const account=document.getElementById("account");
+    document.getElementById("acctBtn").addEventListener("click",e=>{e.stopPropagation();account.classList.toggle("open");});
+    document.addEventListener("click",()=>account.classList.remove("open"));
+    document.getElementById("logout").addEventListener("click",async e=>{e.preventDefault();await sb.auth.signOut();localStorage.removeItem("vendora_user");location.reload();});
+    loadCredits(u.id);
+  }
+  async function loadCredits(id){
+    const { data } = await sb.from("profiles").select("credits, plan").eq("id", id).maybeSingle();
+    if(data){ document.getElementById("navCredits").textContent = data.plan==="ultimate" ? "∞" : (data.credits!=null ? data.credits.toLocaleString("fr-FR") : "0"); }
+  }
+  sb.auth.getSession().then(({data})=>{ if(data.session) showLoggedIn(data.session.user); });
+</script>
+</body>
+</html>
