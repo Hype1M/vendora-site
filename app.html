@@ -166,7 +166,7 @@
   const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
   const COST = 100; // crédits par génération
-  const BACKEND = "https://gemini-api-ko4v.onrender.com"; // API Render (Gemini)
+  const BACKEND = "https://vendorastudio-api.vercel.app"; // backend Next (Vercel) — CORS + auth + crédits serveur
   let USER = null, TOKEN = null, credits = null, plan = null;
 
   function creditsLabel(){ if(plan==="ultimate") return "∞"; if(credits===null) return "…"; try{return credits.toLocaleString("fr-FR");}catch(e){return String(credits);} }
@@ -241,11 +241,20 @@
     }
     go.disabled=true; const prev=go.textContent; go.textContent="Amélioration… (jusqu'à 3 min)";
     try{
-      // 1) génération via l'API Render (Gemini) — ne gère PAS les crédits
+      // génération via le backend Vercel — il vérifie le token, décompte les crédits
+      // côté serveur et renvoie l'image (ou 402 si crédits épuisés).
       const fd=new FormData();
       fd.append("image1", file.files[0], file.files[0].name||"photo.png");
       fd.append("background", bg);
-      const r=await fetch(BACKEND+"/generate",{ method:"POST", body:fd });
+      const r=await fetch(BACKEND+"/api/generate",{
+        method:"POST",
+        headers:{ "Authorization":"Bearer "+TOKEN },
+        body:fd
+      });
+      if(r.status===402){ // crédits épuisés → paywall
+        alert("Crédits insuffisants — recharge ton forfait pour continuer.");
+        location.href="index.html#pricing"; return;
+      }
       const ct=r.headers.get("content-type")||"";
       if(!(r.ok && ct.indexOf("image/")===0)){
         let msg="Échec de la génération ("+r.status+").";
@@ -253,15 +262,9 @@
         alert(msg); return;
       }
       const blob=await r.blob();
-      // 2) décompte des crédits dans Supabase (sauf plan illimité)
-      if(plan!=="ultimate"){
-        const newBal=(credits||0)-COST;
-        const { error }=await sb.from("profiles").update({ credits:newBal }).eq("id", USER.id);
-        if(error){ console.warn("Décompte crédits:", error.message); }
-        else { credits=newBal; paintCredits(); }
-      }
-      // 3) affiche le résultat
+      // affiche le résultat puis rafraîchit le solde (mis à jour côté serveur)
       showResult(URL.createObjectURL(blob));
+      loadCredits();
     }catch(err){
       alert("Impossible de contacter le serveur (il démarrait peut-être — réessaie dans quelques secondes).");
     }finally{
