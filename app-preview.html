@@ -147,10 +147,10 @@
 </main>
 
 <script>
-  /* ---------- Supabase : session obligatoire ---------- */
+  /* PREVIEW */ document.getElementById("creditCount").textContent="120";
   const SUPABASE_URL = "https://zipzllczqfcfvyydvmpy.supabase.co";
   const SUPABASE_ANON_KEY = "sb_publishable_ujJAZvyLdjDzFSWbwBguWw_f0yIMJvs";
-  const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  const sb = { auth:{ getSession:async()=>({data:{session:null}}), signOut:async()=>{} }, from:()=>({select:()=>({eq:()=>({maybeSingle:async()=>({data:null})})})}) };
 
   const COST = 100; // crédits par génération
   const BACKEND = "https://vendorastudio-api.vercel.app"; // backend Next (Vercel) — CORS + auth + crédits serveur
@@ -177,7 +177,7 @@
     paintCredits();
   }
   sb.auth.getSession().then(({data})=>{
-    if(!data.session){ window.location.href="auth.html"; return; }
+    if(!data.session){ }
     TOKEN = data.session.access_token;
     fillUser(data.session.user);
   });
