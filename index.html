@@ -52,10 +52,11 @@
 
   /* nav — floating */
   header{position:sticky;top:14px;z-index:50;margin-top:14px}
-  .nav{display:flex;align-items:center;justify-content:space-between;height:56px;padding:0 10px 0 18px;
+  .nav{display:flex;flex-direction:column;
     background:rgba(255,255,255,.75);backdrop-filter:blur(16px) saturate(180%);
     border:1px solid var(--border);border-radius:16px;
     box-shadow:0 1px 2px rgba(14,15,19,.04),0 12px 28px -18px rgba(14,15,19,.25)}
+  .nav-top{display:flex;align-items:center;justify-content:space-between;height:56px;padding:0 10px 0 18px}
   .logo{display:flex;align-items:center;gap:9px;font-weight:700;font-size:18px}
   .logo .mark{width:28px;height:28px;border-radius:8px;background:var(--text);display:grid;place-items:center}
   .logo .mark svg{width:16px;height:16px}
@@ -67,17 +68,23 @@
   .lang-btn{display:flex;align-items:center;gap:6px;background:none;border:none;cursor:pointer;font-family:var(--font);font-weight:500;font-size:14px;color:var(--muted)}
   .lang-btn:hover{color:var(--text)}
   .lang-btn svg{width:16px;height:16px}
-  /* menu mobile (hamburger) */
-  .menu-wrap{position:relative;display:none}
-  .burger{display:flex;align-items:center;justify-content:center;width:40px;height:40px;border:none;background:none;cursor:pointer;color:var(--text);border-radius:10px;transition:background .15s}
+  /* menu mobile — hamburger qui devient croix, pastille qui s'agrandit */
+  .burger{display:none;position:relative;flex-direction:column;align-items:center;justify-content:center;gap:5px;width:40px;height:40px;border:none;background:none;cursor:pointer;border-radius:10px;transition:background .15s}
   .burger:hover{background:var(--panel)}
-  .burger svg{width:24px;height:24px}
-  .mob-menu{position:absolute;top:calc(100% + 12px);right:0;min-width:220px;background:var(--surface);border:1px solid var(--border);border-radius:12px;box-shadow:0 16px 40px -16px rgba(14,15,19,.3);padding:6px;opacity:0;visibility:hidden;transform:translateY(-6px);transition:.16s;z-index:60}
-  .menu-wrap.open .mob-menu{opacity:1;visibility:visible;transform:translateY(0)}
-  .mob-menu a{display:block;padding:11px 12px;border-radius:9px;font-size:14.5px;color:var(--text);font-weight:500}
+  .burger span{display:block;width:22px;height:2px;background:var(--text);border-radius:2px;transition:transform .25s ease,opacity .18s ease}
+  .nav.open .burger span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+  .nav.open .burger span:nth-child(2){opacity:0}
+  .nav.open .burger span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+  .mob-menu{display:none}
+  .mob-menu a{display:block;width:100%;max-width:300px;text-align:center;padding:13px 12px;border-radius:10px;font-size:15px;color:var(--text);font-weight:500}
   .mob-menu a:hover{background:var(--panel)}
-  .mob-menu .mob-cta{margin-top:6px;background:var(--text);color:#fff;text-align:center;font-weight:600}
-  @media(max-width:760px){.nav-links,.lang-wrap,#tryBtn{display:none!important}.menu-wrap{display:block}}
+  .mob-menu .mob-cta{margin-top:8px;background:var(--text);color:#fff;font-weight:600}
+  @media(max-width:760px){
+    .nav-links,.lang-wrap,#tryBtn{display:none!important}
+    .burger{display:flex}
+    .mob-menu{display:flex;flex-direction:column;align-items:center;gap:2px;max-height:0;overflow:hidden;opacity:0;padding:0 12px;transition:max-height .3s ease,opacity .22s ease,padding .3s ease}
+    .nav.open .mob-menu{max-height:420px;opacity:1;padding:4px 12px 14px}
+  }
 
   .btn{font-family:var(--font);font-weight:600;font-size:14.5px;cursor:pointer;border:none;border-radius:8px;padding:10px 18px;transition:background .15s,border-color .15s,color .15s}
   .btn-primary{background:var(--text);color:#fff}
@@ -224,43 +231,43 @@
 <body>
 
 <header>
-  <div class="wrap nav">
-    <a class="logo" href="#">
-      <span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M6 7l6 10.5L18 7" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="18.6" cy="5.4" r="1.7" fill="#5b8cff"/></svg></span>
-      <span>Vendora<span class="ai">.ai</span></span>
-    </a>
-    <nav class="nav-links">
+  <div class="wrap nav" id="nav">
+    <div class="nav-top">
+      <a class="logo" href="#">
+        <span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M6 7l6 10.5L18 7" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="18.6" cy="5.4" r="1.7" fill="#5b8cff"/></svg></span>
+        <span>Vendora<span class="ai">.ai</span></span>
+      </a>
+      <nav class="nav-links">
+        <a href="#how">Comment ça marche</a>
+        <a href="#features">Fonctionnalités</a>
+        <a href="#pricing">Tarifs</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+      <div class="nav-right">
+        <div class="lang-wrap"><button class="lang-btn" id="langBtn"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.7"/><path d="M3 12h18M12 3c2.5 2.4 3.8 5.6 3.8 9S14.5 18.6 12 21c-2.5-2.4-3.8-5.6-3.8-9S9.5 5.4 12 3Z" stroke="currentColor" stroke-width="1.7"/></svg><span id="langLabel">FR</span></button></div>
+        <a class="btn btn-primary" id="tryBtn" href="auth.html">Essayer</a>
+        <div class="authbox" id="authbox" style="display:none">
+          <div class="account" id="account">
+            <button class="acct-btn" id="acctBtn"><span class="avatar" id="navAvatar">T</span><span class="acct-cr"><b id="navCredits">120</b> crédits</span><svg class="acct-chev" viewBox="0 0 24 24" fill="none"><path d="m6 9 6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+            <div class="acct-menu" id="acctMenu">
+              <div class="acct-head"><span class="avatar sm" id="navAvatar2">T</span><div><b id="menuName">Thomas</b><span id="menuMail">thomas@exemple.com</span></div></div>
+              <a href="app.html">Améliorer une photo</a>
+              <a href="#pricing">Mes crédits & facturation</a>
+              <a href="#" id="logout">Déconnexion</a>
+            </div>
+          </div>
+        </div>
+        <button class="burger" id="burgerBtn" aria-label="Menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+    <div class="mob-menu" id="mobMenu">
       <a href="#how">Comment ça marche</a>
       <a href="#features">Fonctionnalités</a>
       <a href="#pricing">Tarifs</a>
       <a href="#faq">FAQ</a>
-    </nav>
-    <div class="nav-right">
-      <div class="lang-wrap"><button class="lang-btn" id="langBtn"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.7"/><path d="M3 12h18M12 3c2.5 2.4 3.8 5.6 3.8 9S14.5 18.6 12 21c-2.5-2.4-3.8-5.6-3.8-9S9.5 5.4 12 3Z" stroke="currentColor" stroke-width="1.7"/></svg><span id="langLabel">FR</span></button></div>
-      <a class="btn btn-primary" id="tryBtn" href="auth.html">Essayer</a>
-      <div class="authbox" id="authbox" style="display:none">
-        <div class="account" id="account">
-          <button class="acct-btn" id="acctBtn"><span class="avatar" id="navAvatar">T</span><span class="acct-cr"><b id="navCredits">120</b> crédits</span><svg class="acct-chev" viewBox="0 0 24 24" fill="none"><path d="m6 9 6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-          <div class="acct-menu" id="acctMenu">
-            <div class="acct-head"><span class="avatar sm" id="navAvatar2">T</span><div><b id="menuName">Thomas</b><span id="menuMail">thomas@exemple.com</span></div></div>
-            <a href="app.html">Améliorer une photo</a>
-            <a href="#pricing">Mes crédits & facturation</a>
-            <a href="#" id="logout">Déconnexion</a>
-          </div>
-        </div>
-      </div>
-      <div class="menu-wrap" id="menuWrap">
-        <button class="burger" id="burgerBtn" aria-label="Menu" aria-expanded="false">
-          <svg viewBox="0 0 24 24" fill="none"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-        </button>
-        <div class="mob-menu" id="mobMenu">
-          <a href="#how">Comment ça marche</a>
-          <a href="#features">Fonctionnalités</a>
-          <a href="#pricing">Tarifs</a>
-          <a href="#faq">FAQ</a>
-          <a class="btn btn-primary mob-cta" href="auth.html">Essayer</a>
-        </div>
-      </div>
+      <a class="btn btn-primary mob-cta" href="auth.html">Essayer</a>
     </div>
   </div>
 </header>
@@ -428,25 +435,20 @@
   }
   sb.auth.getSession().then(({data})=>{ if(data.session) showLoggedIn(data.session.user); });
 
-  // Menu mobile (hamburger)
+  // Menu mobile (hamburger -> croix, pastille qui s'agrandit)
   (function(){
-    const wrap=document.getElementById("menuWrap");
+    const nav=document.getElementById("nav");
     const btn=document.getElementById("burgerBtn");
     const menu=document.getElementById("mobMenu");
-    if(!wrap||!btn||!menu) return;
+    if(!nav||!btn||!menu) return;
+    const close=()=>{nav.classList.remove("open");btn.setAttribute("aria-expanded","false");};
     btn.addEventListener("click",e=>{
       e.stopPropagation();
-      const open=wrap.classList.toggle("open");
+      const open=nav.classList.toggle("open");
       btn.setAttribute("aria-expanded",open?"true":"false");
     });
-    menu.querySelectorAll("a").forEach(a=>a.addEventListener("click",()=>{
-      wrap.classList.remove("open");
-      btn.setAttribute("aria-expanded","false");
-    }));
-    document.addEventListener("click",()=>{
-      wrap.classList.remove("open");
-      btn.setAttribute("aria-expanded","false");
-    });
+    menu.querySelectorAll("a").forEach(a=>a.addEventListener("click",close));
+    document.addEventListener("click",e=>{ if(!nav.contains(e.target)) close(); });
   })();
 </script>
 <!-- Vercel Web Analytics -->
