@@ -85,7 +85,8 @@
     /* barre du haut + menu = fond blanc plein 100% opaque -> rendu strictement identique */
     .nav{background:#fff}
     /* overlay collé à la navbar : s'ouvre PAR-DESSUS la page, même opacité/flou que la navbar */
-    .nav.open{border-bottom-left-radius:0;border-bottom-right-radius:0}
+    /* à l'ouverture : plus de trait ni d'ombre entre la barre et le menu -> bloc blanc continu */
+    .nav.open{border-bottom-left-radius:0;border-bottom-right-radius:0;border-bottom:none;box-shadow:none}
     .mob-menu{display:flex;flex-direction:column;align-items:center;gap:2px;
       position:absolute;left:-1px;right:-1px;top:100%;z-index:40;
       background:#fff;
