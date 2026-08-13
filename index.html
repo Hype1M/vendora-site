@@ -82,6 +82,8 @@
   @media(max-width:760px){
     .nav-links,.lang-wrap,#tryBtn{display:none!important}
     .burger{display:flex}
+    /* barre du haut + menu = exactement le même fond, pour un bloc uniforme */
+    .nav{background:rgba(255,255,255,.92)}
     /* overlay collé à la navbar : s'ouvre PAR-DESSUS la page, même opacité/flou que la navbar */
     .nav.open{border-bottom-left-radius:0;border-bottom-right-radius:0}
     .mob-menu{display:flex;flex-direction:column;align-items:center;gap:2px;
