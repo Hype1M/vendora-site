@@ -67,7 +67,17 @@
   .lang-btn{display:flex;align-items:center;gap:6px;background:none;border:none;cursor:pointer;font-family:var(--font);font-weight:500;font-size:14px;color:var(--muted)}
   .lang-btn:hover{color:var(--text)}
   .lang-btn svg{width:16px;height:16px}
-  @media(max-width:760px){.nav-links,.lang-wrap{display:none}}
+  /* menu mobile (hamburger) */
+  .menu-wrap{position:relative;display:none}
+  .burger{display:flex;align-items:center;justify-content:center;width:40px;height:40px;border:none;background:none;cursor:pointer;color:var(--text);border-radius:10px;transition:background .15s}
+  .burger:hover{background:var(--panel)}
+  .burger svg{width:24px;height:24px}
+  .mob-menu{position:absolute;top:calc(100% + 12px);right:0;min-width:220px;background:var(--surface);border:1px solid var(--border);border-radius:12px;box-shadow:0 16px 40px -16px rgba(14,15,19,.3);padding:6px;opacity:0;visibility:hidden;transform:translateY(-6px);transition:.16s;z-index:60}
+  .menu-wrap.open .mob-menu{opacity:1;visibility:visible;transform:translateY(0)}
+  .mob-menu a{display:block;padding:11px 12px;border-radius:9px;font-size:14.5px;color:var(--text);font-weight:500}
+  .mob-menu a:hover{background:var(--panel)}
+  .mob-menu .mob-cta{margin-top:6px;background:var(--text);color:#fff;text-align:center;font-weight:600}
+  @media(max-width:760px){.nav-links,.lang-wrap,#tryBtn{display:none!important}.menu-wrap{display:block}}
 
   .btn{font-family:var(--font);font-weight:600;font-size:14.5px;cursor:pointer;border:none;border-radius:8px;padding:10px 18px;transition:background .15s,border-color .15s,color .15s}
   .btn-primary{background:var(--text);color:#fff}
@@ -238,6 +248,18 @@
           </div>
         </div>
       </div>
+      <div class="menu-wrap" id="menuWrap">
+        <button class="burger" id="burgerBtn" aria-label="Menu" aria-expanded="false">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+        <div class="mob-menu" id="mobMenu">
+          <a href="#how">Comment ça marche</a>
+          <a href="#features">Fonctionnalités</a>
+          <a href="#pricing">Tarifs</a>
+          <a href="#faq">FAQ</a>
+          <a class="btn btn-primary mob-cta" href="auth.html">Essayer</a>
+        </div>
+      </div>
     </div>
   </div>
 </header>
@@ -404,6 +426,27 @@
     if(data){ document.getElementById("navCredits").textContent = data.plan==="ultimate" ? "∞" : (data.credits!=null ? data.credits.toLocaleString("fr-FR") : "0"); }
   }
   sb.auth.getSession().then(({data})=>{ if(data.session) showLoggedIn(data.session.user); });
+
+  // Menu mobile (hamburger)
+  (function(){
+    const wrap=document.getElementById("menuWrap");
+    const btn=document.getElementById("burgerBtn");
+    const menu=document.getElementById("mobMenu");
+    if(!wrap||!btn||!menu) return;
+    btn.addEventListener("click",e=>{
+      e.stopPropagation();
+      const open=wrap.classList.toggle("open");
+      btn.setAttribute("aria-expanded",open?"true":"false");
+    });
+    menu.querySelectorAll("a").forEach(a=>a.addEventListener("click",()=>{
+      wrap.classList.remove("open");
+      btn.setAttribute("aria-expanded","false");
+    }));
+    document.addEventListener("click",()=>{
+      wrap.classList.remove("open");
+      btn.setAttribute("aria-expanded","false");
+    });
+  })();
 </script>
 <!-- Vercel Web Analytics -->
 <script>window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments);};</script>
