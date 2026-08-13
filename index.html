@@ -68,6 +68,12 @@
   .lang-btn{display:flex;align-items:center;gap:6px;background:none;border:none;cursor:pointer;font-family:var(--font);font-weight:500;font-size:14px;color:var(--muted)}
   .lang-btn:hover{color:var(--text)}
   .lang-btn svg{width:16px;height:16px}
+  /* voile flou plein écran quand le menu mobile est ouvert */
+  .nav-scrim{position:fixed;inset:0;z-index:40;opacity:0;visibility:hidden;pointer-events:none;
+    -webkit-backdrop-filter:blur(7px);backdrop-filter:blur(7px);
+    background:rgba(18,19,24,.06);
+    transition:opacity .25s ease,visibility .25s}
+  .nav-scrim.show{opacity:1;visibility:visible;pointer-events:auto}
   /* menu mobile — hamburger qui devient croix, pastille qui s'agrandit */
   .burger{display:none;position:relative;flex-direction:column;align-items:center;justify-content:center;gap:5px;width:40px;height:40px;border:none;background:none;cursor:pointer;border-radius:10px;transition:background .15s}
   .burger:hover{background:var(--panel)}
@@ -242,6 +248,7 @@
 </head>
 <body>
 
+<div class="nav-scrim" id="navScrim"></div>
 <header>
   <div class="wrap nav" id="nav">
     <div class="nav-top">
@@ -452,12 +459,14 @@
     const nav=document.getElementById("nav");
     const btn=document.getElementById("burgerBtn");
     const menu=document.getElementById("mobMenu");
+    const scrim=document.getElementById("navScrim");
     if(!nav||!btn||!menu) return;
-    const close=()=>{nav.classList.remove("open");btn.setAttribute("aria-expanded","false");};
+    const close=()=>{nav.classList.remove("open");btn.setAttribute("aria-expanded","false");if(scrim)scrim.classList.remove("show");};
     btn.addEventListener("click",e=>{
       e.stopPropagation();
       const open=nav.classList.toggle("open");
       btn.setAttribute("aria-expanded",open?"true":"false");
+      if(scrim)scrim.classList.toggle("show",open);
     });
     menu.querySelectorAll("a").forEach(a=>a.addEventListener("click",close));
     document.addEventListener("click",e=>{ if(!nav.contains(e.target)) close(); });
