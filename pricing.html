@@ -244,6 +244,13 @@
   .acct-menu a{display:block;padding:10px 12px;border-radius:9px;font-size:14px;color:var(--text);font-weight:500}
   .acct-menu a:hover{background:var(--panel)}
   @media(max-width:600px){.acct-name,.credits{display:none}}
+  /* recharge de crédits (paiement unique) */
+  .recharges{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:720px;margin:0 auto}
+  .recharge-card{background:#fff;border:1px solid var(--border);border-radius:16px;padding:26px 24px;text-align:center;display:flex;flex-direction:column;align-items:center;box-shadow:0 1px 2px rgba(14,15,19,.04),0 18px 40px -30px rgba(14,15,19,.3)}
+  .recharge-card .rc-credits{font-weight:700;font-size:21px;letter-spacing:-.02em}
+  .recharge-card .rc-sub{color:var(--muted);font-size:13.5px;margin:6px 0 18px}
+  .recharge-card .btn{width:100%;padding:12px}
+  @media(max-width:640px){.recharges{grid-template-columns:1fr;max-width:400px}}
 </style>
 </head>
 <body>
@@ -325,6 +332,22 @@
             <li><svg viewBox="0 0 24 24" fill="none"><path d="M20 6 9 17l-5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> Crédits illimités / mois</li>
           </ul>
           <a class="btn btn-line" href="auth.html">Choisir</a>
+        </div>
+      </div>
+
+      <div class="recharge">
+        <div class="sec-head" style="margin-top:64px"><h2>Recharge de crédits</h2><p>Achète des crédits sans abonnement pour tester la plateforme. Paiement unique.</p></div>
+        <div class="recharges">
+          <div class="recharge-card">
+            <div class="rc-credits">800 crédits</div>
+            <div class="rc-sub">Paiement unique · 9,90 €</div>
+            <a class="btn btn-line" href="auth.html">Débloquer — 9,90 €</a>
+          </div>
+          <div class="recharge-card">
+            <div class="rc-credits">2 000 crédits</div>
+            <div class="rc-sub">Paiement unique · 19,90 €</div>
+            <a class="btn btn-primary" href="auth.html">Débloquer — 19,90 €</a>
+          </div>
         </div>
       </div>
     </div>
