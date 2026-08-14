@@ -251,6 +251,14 @@
   .recharge-card .rc-sub{color:var(--muted);font-size:13.5px;margin:6px 0 18px}
   .recharge-card .btn{width:100%;padding:12px}
   @media(max-width:640px){.recharges{grid-template-columns:1fr;max-width:400px}}
+  /* toggle mensuel / annuel (abonnements) */
+  .billing-toggle{display:flex;width:-moz-fit-content;width:fit-content;margin:0 auto 32px;padding:4px;background:var(--panel);border:1px solid var(--border);border-radius:999px;gap:2px}
+  .bt-opt{font-family:var(--font);font-weight:600;font-size:14px;color:var(--muted);background:none;border:none;cursor:pointer;padding:9px 22px;border-radius:999px;transition:background .15s,color .15s}
+  .bt-opt.active{background:var(--text);color:#fff}
+  .guarantee{font-size:12.5px;color:var(--brand);font-weight:600;margin-top:8px}
+  .billed-year{display:none;font-size:12.5px;color:var(--muted);margin-top:4px}
+  .plans.yearly .billed-year{display:block}
+  .plan-incl{font-size:11.5px;color:var(--faint);font-weight:700;margin-top:16px;text-transform:uppercase;letter-spacing:.05em}
 </style>
 </head>
 <body>
@@ -305,11 +313,18 @@
   <section id="pricing" style="padding-top:80px">
     <div class="wrap">
       <div class="sec-head"><h2>Tarifs</h2><p>Choisis le forfait adapté à ton volume de ventes.</p></div>
+      <div class="billing-toggle">
+        <button class="bt-opt active" data-period="month">Mensuel</button>
+        <button class="bt-opt" data-period="year">Annuel</button>
+      </div>
       <div class="plans">
         <div class="plan">
           <div class="ptop"><h3>Découverte</h3></div>
           <div class="ptagline">&nbsp;</div>
-          <div class="price">9,90€<small> /mois</small></div>
+          <div class="price"><span class="price-amount" data-m="9,90€" data-y="7,90€">9,90€</span><small> /mois</small></div>
+          <div class="guarantee">Satisfait ou remboursé immédiatement</div>
+          <div class="billed-year">Facturé 94,80 € /an</div>
+          <div class="plan-incl">Votre forfait inclut :</div>
           <ul>
             <li><svg viewBox="0 0 24 24" fill="none"><path d="M20 6 9 17l-5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> 2 000 crédits / mois</li>
           </ul>
@@ -318,7 +333,10 @@
         <div class="plan pro">
           <div class="ptop"><h3>Essentiel</h3><span class="tag">Populaire</span></div>
           <div class="ptagline">&nbsp;</div>
-          <div class="price">19,90€<small> /mois</small></div>
+          <div class="price"><span class="price-amount" data-m="19,90€" data-y="16,90€">19,90€</span><small> /mois</small></div>
+          <div class="guarantee">Satisfait ou remboursé immédiatement</div>
+          <div class="billed-year">Facturé 202,80 € /an</div>
+          <div class="plan-incl">Votre forfait inclut :</div>
           <ul>
             <li><svg viewBox="0 0 24 24" fill="none"><path d="M20 6 9 17l-5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> 5 000 crédits / mois</li>
           </ul>
@@ -327,7 +345,10 @@
         <div class="plan">
           <div class="ptop"><h3>Ultimate</h3></div>
           <div class="ptagline">Pour les créateurs sans limites</div>
-          <div class="price">39,90€<small> /mois</small></div>
+          <div class="price"><span class="price-amount" data-m="39,90€" data-y="33,90€">39,90€</span><small> /mois</small></div>
+          <div class="guarantee">Satisfait ou remboursé immédiatement</div>
+          <div class="billed-year">Facturé 406,80 € /an</div>
+          <div class="plan-incl">Votre forfait inclut :</div>
           <ul>
             <li><svg viewBox="0 0 24 24" fill="none"><path d="M20 6 9 17l-5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> Crédits illimités / mois</li>
           </ul>
@@ -413,6 +434,21 @@
     });
     menu.querySelectorAll("a").forEach(a=>a.addEventListener("click",close));
     document.addEventListener("click",e=>{ if(!nav.contains(e.target)) close(); });
+  })();
+
+  // Toggle mensuel / annuel (abonnements uniquement)
+  (function(){
+    const toggle=document.querySelector(".billing-toggle");
+    const plans=document.querySelector(".plans");
+    if(!toggle||!plans) return;
+    toggle.addEventListener("click",e=>{
+      const btn=e.target.closest(".bt-opt");
+      if(!btn) return;
+      toggle.querySelectorAll(".bt-opt").forEach(b=>b.classList.toggle("active",b===btn));
+      const year=btn.dataset.period==="year";
+      plans.classList.toggle("yearly",year);
+      plans.querySelectorAll(".price-amount").forEach(el=>{el.textContent=year?el.dataset.y:el.dataset.m;});
+    });
   })();
 </script>
 <!-- Vercel Web Analytics -->
