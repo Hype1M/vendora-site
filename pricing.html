@@ -255,6 +255,8 @@
   .billing-toggle{display:flex;width:-moz-fit-content;width:fit-content;margin:0 auto 32px;padding:4px;background:var(--panel);border:1px solid var(--border);border-radius:999px;gap:2px}
   .bt-opt{font-family:var(--font);font-weight:600;font-size:14px;color:var(--muted);background:none;border:none;cursor:pointer;padding:9px 22px;border-radius:999px;transition:background .15s,color .15s}
   .bt-opt.active{background:var(--text);color:#fff}
+  .bt-badge{font-size:10.5px;font-weight:700;padding:2px 6px;border-radius:999px;margin-left:7px;background:rgba(47,107,255,.12);color:var(--brand)}
+  .bt-opt.active .bt-badge{background:rgba(255,255,255,.22);color:#fff}
   .guarantee{font-size:12.5px;color:var(--brand);font-weight:600;margin-top:8px}
   .billed-year{display:none;font-size:12.5px;color:var(--muted);margin-top:4px}
   .plans.yearly .billed-year{display:block}
@@ -315,7 +317,7 @@
       <div class="sec-head"><h2>Tarifs</h2><p>Choisis le forfait adapté à ton volume de ventes.</p></div>
       <div class="billing-toggle">
         <button class="bt-opt active" data-period="month">Mensuel</button>
-        <button class="bt-opt" data-period="year">Annuel</button>
+        <button class="bt-opt" data-period="year">Annuel <span class="bt-badge">-20%</span></button>
       </div>
       <div class="plans">
         <div class="plan">
