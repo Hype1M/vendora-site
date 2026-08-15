@@ -105,9 +105,8 @@
     /* sur mobile : le compte/crédits n'est plus dans la barre, il passe dans le menu */
     .authbox{display:none!important}
   }
-  .mob-account{flex-direction:column;align-items:center;gap:2px;width:100%}
-  .mob-cr{font-size:15px;font-weight:700;color:var(--text);padding:10px 12px 4px}
-  .mob-cr b{color:var(--brand)}
+  .mob-account{width:100%}
+  .mob-user{border:1px solid var(--text);border-radius:10px;padding:12px;text-align:center;font-weight:600;font-size:14.5px;color:var(--text);word-break:break-word}
 
   .btn{font-family:var(--font);font-weight:600;font-size:14.5px;cursor:pointer;border:none;border-radius:8px;padding:10px 18px;transition:background .15s,border-color .15s,color .15s}
   .btn-primary{background:var(--text);color:#fff}
@@ -312,10 +311,7 @@
       <a href="index.html#faq">FAQ</a>
       <a class="btn btn-primary mob-cta" href="auth.html">Essayer</a>
       <div class="mob-account" id="mobAccount" style="display:none">
-        <div class="mob-cr"><b id="mobCredits">120</b> crédits</div>
-        <a href="app.html">Améliorer une photo</a>
-        <a href="pricing.html">Mes crédits &amp; facturation</a>
-        <a href="#" id="mobLogout">Déconnexion</a>
+        <div class="mob-user" id="mobUser">&nbsp;</div>
       </div>
     </div>
   </div>
@@ -416,10 +412,10 @@
     // mobile : crédits + compte dans le menu déroulant (à la place de "Essayer")
     const mobCta=document.querySelector(".mob-cta");
     const mobAccount=document.getElementById("mobAccount");
+    const mobUser=document.getElementById("mobUser");
+    if(mobUser) mobUser.textContent = u.email || name;
     if(mobCta) mobCta.style.display="none";
-    if(mobAccount) mobAccount.style.display="flex";
-    const mobLogout=document.getElementById("mobLogout");
-    if(mobLogout) mobLogout.addEventListener("click",async e=>{e.preventDefault();await sb.auth.signOut();localStorage.removeItem("vendora_user");location.reload();});
+    if(mobAccount) mobAccount.style.display="block";
     document.getElementById("navAvatar").textContent=initial;
     document.getElementById("navAvatar2").textContent=initial;
     document.getElementById("menuName").textContent=name;
@@ -434,11 +430,7 @@
   }
   async function loadCredits(id){
     const { data } = await sb.from("profiles").select("credits, plan").eq("id", id).maybeSingle();
-    if(data){
-      const val = data.plan==="ultimate" ? "∞" : (data.credits!=null ? data.credits.toLocaleString("fr-FR") : "0");
-      document.getElementById("navCredits").textContent = val;
-      const mc=document.getElementById("mobCredits"); if(mc) mc.textContent = val;
-    }
+    if(data){ document.getElementById("navCredits").textContent = data.plan==="ultimate" ? "∞" : (data.credits!=null ? data.credits.toLocaleString("fr-FR") : "0"); }
   }
   sb.auth.getSession().then(({data})=>{ if(data.session) showLoggedIn(data.session.user); });
 
