@@ -107,6 +107,15 @@
   }
   .mob-account{width:100%}
   .mob-user{border:1px solid var(--text);border-radius:10px;padding:12px;text-align:center;font-weight:600;font-size:14.5px;color:var(--text);word-break:break-word}
+  /* connecté : barre collée en haut (non flottante), logo + hamburger plus petits */
+  .is-auth header{top:0;margin-top:0}
+  .is-auth .nav{width:100%;border-radius:0;border-left:none;border-right:none;border-top:none;box-shadow:0 1px 0 var(--border)}
+  .is-auth .nav-top{height:50px}
+  .is-auth .logo{font-size:16px;gap:8px}
+  .is-auth .logo .mark{width:24px;height:24px;border-radius:7px}
+  .is-auth .logo .mark svg{width:14px;height:14px}
+  .is-auth .burger{width:34px;height:34px}
+  .is-auth .burger span{width:20px}
 
   .btn{font-family:var(--font);font-weight:600;font-size:14.5px;cursor:pointer;border:none;border-radius:8px;padding:10px 18px;transition:background .15s,border-color .15s,color .15s}
   .btn-primary{background:var(--text);color:#fff}
@@ -407,6 +416,7 @@
   function showLoggedIn(u){
     const name = (u.user_metadata && (u.user_metadata.name || u.user_metadata.full_name)) || (u.email ? u.email.split("@")[0] : "Mon compte");
     const initial = name.trim().charAt(0).toUpperCase();
+    document.documentElement.classList.add("is-auth");
     document.getElementById("tryBtn").style.display="none";
     document.getElementById("authbox").style.display="flex";
     // mobile : crédits + compte dans le menu déroulant (à la place de "Essayer")
