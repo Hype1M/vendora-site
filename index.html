@@ -102,7 +102,12 @@
       opacity:0;visibility:hidden;transform:translateY(-6px);pointer-events:none;
       transition:opacity .2s ease,transform .22s ease,visibility .2s}
     .nav.open .mob-menu{opacity:1;visibility:visible;transform:translateY(0);pointer-events:auto}
+    /* sur mobile : le compte/crédits n'est plus dans la barre, il passe dans le menu */
+    .authbox{display:none!important}
   }
+  .mob-account{flex-direction:column;align-items:center;gap:2px;width:100%}
+  .mob-cr{font-size:15px;font-weight:700;color:var(--text);padding:10px 12px 4px}
+  .mob-cr b{color:var(--brand)}
 
   .btn{font-family:var(--font);font-weight:600;font-size:14.5px;cursor:pointer;border:none;border-radius:8px;padding:10px 18px;transition:background .15s,border-color .15s,color .15s}
   .btn-primary{background:var(--text);color:#fff}
@@ -287,6 +292,12 @@
       <a href="pricing.html">Tarifs</a>
       <a href="#faq">FAQ</a>
       <a class="btn btn-primary mob-cta" href="auth.html">Essayer</a>
+      <div class="mob-account" id="mobAccount" style="display:none">
+        <div class="mob-cr"><b id="mobCredits">120</b> crédits</div>
+        <a href="app.html">Améliorer une photo</a>
+        <a href="pricing.html">Mes crédits &amp; facturation</a>
+        <a href="#" id="mobLogout">Déconnexion</a>
+      </div>
     </div>
   </div>
 </header>
@@ -402,6 +413,13 @@
     const initial = name.trim().charAt(0).toUpperCase();
     document.getElementById("tryBtn").style.display="none";
     document.getElementById("authbox").style.display="flex";
+    // mobile : crédits + compte dans le menu déroulant (à la place de "Essayer")
+    const mobCta=document.querySelector(".mob-cta");
+    const mobAccount=document.getElementById("mobAccount");
+    if(mobCta) mobCta.style.display="none";
+    if(mobAccount) mobAccount.style.display="flex";
+    const mobLogout=document.getElementById("mobLogout");
+    if(mobLogout) mobLogout.addEventListener("click",async e=>{e.preventDefault();await sb.auth.signOut();localStorage.removeItem("vendora_user");location.reload();});
     document.getElementById("navAvatar").textContent=initial;
     document.getElementById("navAvatar2").textContent=initial;
     document.getElementById("menuName").textContent=name;
@@ -416,7 +434,11 @@
   }
   async function loadCredits(id){
     const { data } = await sb.from("profiles").select("credits, plan").eq("id", id).maybeSingle();
-    if(data){ document.getElementById("navCredits").textContent = data.plan==="ultimate" ? "∞" : (data.credits!=null ? data.credits.toLocaleString("fr-FR") : "0"); }
+    if(data){
+      const val = data.plan==="ultimate" ? "∞" : (data.credits!=null ? data.credits.toLocaleString("fr-FR") : "0");
+      document.getElementById("navCredits").textContent = val;
+      const mc=document.getElementById("mobCredits"); if(mc) mc.textContent = val;
+    }
   }
   sb.auth.getSession().then(({data})=>{ if(data.session) showLoggedIn(data.session.user); });
 
