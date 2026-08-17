@@ -432,7 +432,8 @@
     const { data } = await sb.from("profiles").select("credits, plan").eq("id", id).maybeSingle();
     if(data){ document.getElementById("navCredits").textContent = data.plan==="ultimate" ? "∞" : (data.credits!=null ? data.credits.toLocaleString("fr-FR") : "0"); }
   }
-  sb.auth.getSession().then(({data})=>{ if(data.session) showLoggedIn(data.session.user); });
+  // connecté sur l'accueil -> on renvoie direct vers l'app
+  sb.auth.getSession().then(({data})=>{ if(data.session){ window.location.replace("app.html"); } });
 
   // Menu mobile (hamburger -> croix, pastille qui s'agrandit)
   (function(){
