@@ -20,14 +20,29 @@
   a{color:inherit;text-decoration:none}
   .wrap{width:min(1000px,90%);margin-inline:auto}
 
-  header{position:sticky;top:14px;z-index:50;margin-top:14px}
-  .nav{display:flex;align-items:center;justify-content:space-between;height:56px;padding:0 10px 0 18px;
-    background:rgba(255,255,255,.75);backdrop-filter:blur(16px) saturate(180%);
-    border:1px solid var(--border);border-radius:16px;box-shadow:0 1px 2px rgba(14,15,19,.04),0 12px 28px -18px rgba(14,15,19,.25)}
-  .logo{display:flex;align-items:center;gap:9px;font-weight:700;font-size:18px}
-  .logo .mark{width:28px;height:28px;border-radius:8px;background:var(--text);display:grid;place-items:center}
-  .logo .mark svg{width:16px;height:16px}
+  /* barre attachée en haut (page connectée) + hamburger */
+  .nav-scrim{position:fixed;inset:0;z-index:40;opacity:0;visibility:hidden;pointer-events:none;-webkit-backdrop-filter:blur(7px);backdrop-filter:blur(7px);background:rgba(18,19,24,.06);transition:opacity .25s ease,visibility .25s}
+  .nav-scrim.show{opacity:1;visibility:visible;pointer-events:auto}
+  header{position:sticky;top:0;z-index:50;margin-top:0}
+  .nav{position:relative;display:flex;flex-direction:column;width:100%;background:#fff;border-bottom:1px solid var(--border);box-shadow:0 1px 0 var(--border)}
+  .nav-top{display:flex;align-items:center;justify-content:space-between;height:50px;padding:0 14px 0 16px}
+  .logo{display:flex;align-items:center;gap:8px;font-weight:700;font-size:16px}
+  .logo .mark{width:24px;height:24px;border-radius:7px;background:var(--text);display:grid;place-items:center}
+  .logo .mark svg{width:14px;height:14px}
   .logo .ai{color:var(--faint);font-weight:600}
+  .burger{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;width:34px;height:34px;border:none;background:none;cursor:pointer;border-radius:9px;transition:background .15s}
+  .burger:hover{background:var(--panel)}
+  .burger span{display:block;width:20px;height:2px;background:var(--text);border-radius:2px;transition:transform .25s ease,opacity .18s ease}
+  .nav.open .burger span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+  .nav.open .burger span:nth-child(2){opacity:0}
+  .nav.open .burger span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+  .mob-menu{display:flex;flex-direction:column;align-items:center;gap:2px;position:absolute;left:0;right:0;top:100%;z-index:40;background:#fff;border-bottom:1px solid var(--border);box-shadow:0 20px 44px -18px rgba(14,15,19,.4);padding:12px 14px 16px;opacity:0;visibility:hidden;transform:translateY(-8px);pointer-events:none;transition:opacity .2s ease,transform .22s ease,visibility .2s}
+  .nav.open .mob-menu{opacity:1;visibility:visible;transform:translateY(0);pointer-events:auto}
+  .mob-menu a{display:block;width:100%;text-align:center;padding:13px 12px;border-radius:10px;font-size:15px;color:var(--text);font-weight:500}
+  .mob-menu a:hover{background:var(--panel)}
+  .mob-user{width:100%;border:1px solid var(--text);border-radius:10px;padding:12px;text-align:center;font-weight:600;font-size:14.5px;color:var(--text);word-break:break-word;margin-bottom:2px}
+  .mob-cr-line{font-size:14px;font-weight:600;color:var(--text);padding:8px 8px 4px}
+  .mob-cr-line b{color:var(--brand)}
   .back{display:flex;align-items:center;gap:7px;color:var(--muted);font-weight:500;font-size:14px}
   .back:hover{color:var(--text)}
   .back svg{width:16px;height:16px}
@@ -96,26 +111,24 @@
 </head>
 <body>
 
+<div class="nav-scrim" id="navScrim"></div>
 <header>
-  <div class="wrap nav">
-    <a class="logo" href="index.html">
-      <span class="mark"><svg viewBox="0 0 24 24" fill="none"><path d="M6 7l6 10.5L18 7" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="18.6" cy="5.4" r="1.7" fill="#5b8cff"/></svg></span>
-      <span>Vendora<span class="ai">.ai</span></span>
-    </a>
-    <div style="display:flex;align-items:center;gap:12px">
-      <div class="account" id="account">
-        <button class="acct-btn" id="acctBtn">
-          <span class="avatar" id="avatar">T</span>
-          <span class="acct-cr"><b id="creditCount">120</b> crédits</span>
-          <svg class="acct-chev" viewBox="0 0 24 24" fill="none"><path d="m6 9 6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
-        <div class="acct-menu" id="acctMenu">
-          <div class="acct-head"><span class="avatar sm" id="avatar2">T</span><div><b id="menuName">Thomas</b><span id="menuMail">thomas@exemple.com</span></div></div>
-          <a href="#">Mon compte</a>
-          <a href="#pricing">Mes crédits & facturation</a>
-          <a href="index.html" id="logout">Déconnexion</a>
-        </div>
-      </div>
+  <div class="wrap nav" id="nav">
+    <div class="nav-top">
+      <a class="logo" href="index.html">
+        <span class="mark"><svg viewBox="0 0 24 24" fill="none"><path d="M6 7l6 10.5L18 7" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="18.6" cy="5.4" r="1.7" fill="#5b8cff"/></svg></span>
+        <span>Vendora<span class="ai">.ai</span></span>
+      </a>
+      <button class="burger" id="burgerBtn" aria-label="Menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <div class="mob-menu" id="mobMenu">
+      <div class="mob-user"><span id="menuMail">&nbsp;</span></div>
+      <div class="mob-cr-line"><b id="creditCount">…</b> crédits</div>
+      <a href="index.html">Accueil</a>
+      <a href="pricing.html">Mes crédits &amp; facturation</a>
+      <a href="index.html" id="logout">Déconnexion</a>
     </div>
   </div>
 </header>
@@ -162,11 +175,8 @@
   function fillUser(u){
     USER = u;
     const name = (u.user_metadata && (u.user_metadata.name || u.user_metadata.full_name)) || (u.email ? u.email.split("@")[0] : "Mon compte");
-    const initial = name.trim().charAt(0).toUpperCase();
-    document.getElementById("avatar").textContent=initial;
-    document.getElementById("avatar2").textContent=initial;
-    document.getElementById("menuName").textContent=name;
-    document.getElementById("menuMail").textContent=u.email||"";
+    const setT=(id,v)=>{const el=document.getElementById(id); if(el) el.textContent=v;};
+    setT("menuMail", u.email||name);
     localStorage.setItem("vendora_user", JSON.stringify({id:u.id,name:name,email:u.email||""}));
     loadCredits();
   }
@@ -182,9 +192,15 @@
     fillUser(data.session.user);
   });
 
-  const account=document.getElementById("account");
-  document.getElementById("acctBtn").addEventListener("click",e=>{e.stopPropagation();account.classList.toggle("open");});
-  document.addEventListener("click",()=>account.classList.remove("open"));
+  // menu hamburger (barre attachée)
+  (function(){
+    const nav=document.getElementById("nav"), btn=document.getElementById("burgerBtn"), menu=document.getElementById("mobMenu"), scrim=document.getElementById("navScrim");
+    if(!nav||!btn||!menu) return;
+    const close=()=>{nav.classList.remove("open");btn.setAttribute("aria-expanded","false");if(scrim)scrim.classList.remove("show");};
+    btn.addEventListener("click",e=>{e.stopPropagation();const open=nav.classList.toggle("open");btn.setAttribute("aria-expanded",open?"true":"false");if(scrim)scrim.classList.toggle("show",open);});
+    menu.querySelectorAll("a").forEach(a=>a.addEventListener("click",close));
+    document.addEventListener("click",e=>{ if(!nav.contains(e.target)) close(); });
+  })();
   document.getElementById("logout").addEventListener("click",async e=>{e.preventDefault();await sb.auth.signOut();localStorage.removeItem("vendora_user");window.location.href="index.html";});
 
   const file=document.getElementById("file");
