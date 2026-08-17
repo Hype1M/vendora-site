@@ -85,7 +85,7 @@
   .btn-line{background:#fff;color:var(--text);border:1px solid var(--border)}
   .btn-line:hover{border-color:var(--faint)}
 
-  main{padding:120px 0 110px}
+  main{min-height:calc(100vh - 51px);display:flex;flex-direction:column;justify-content:center;padding:40px 0}
   .head{text-align:center;max-width:560px;margin:0 auto 30px}
   .head h1{font-weight:700;font-size:clamp(26px,3.6vw,36px);letter-spacing:-.03em;margin-bottom:8px}
   .head h1 .k{color:var(--brand)}
@@ -194,7 +194,7 @@
       </div>
 
       <button class="go" id="go" disabled>Améliorer ma photo</button>
-      <p class="hint"><svg viewBox="0 0 24 24" fill="none"><path d="M13 2 4 13h6l-1 9 9-11h-6l1-9Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg> 100 crédits par photo · export HD sans filigrane</p>
+      <p class="hint"><svg viewBox="0 0 24 24" fill="none"><path d="M13 2 4 13h6l-1 9 9-11h-6l1-9Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg> export HD sans filigrane</p>
     </div>
   </div>
 </main>
