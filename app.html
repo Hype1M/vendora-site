@@ -115,6 +115,19 @@
   .go:disabled:hover{background:var(--panel)}
   .hint{display:flex;align-items:center;justify-content:center;gap:6px;text-align:center;color:var(--faint);font-size:12.5px;margin-top:12px}
   .hint svg{width:14px;height:14px;color:var(--brand)}
+
+  /* modale Paramètres */
+  .modal-overlay{position:fixed;inset:0;z-index:60;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(18,19,24,.28);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
+  .modal-overlay.show{display:flex}
+  .modal{width:100%;max-width:380px;background:#fff;border:1px solid var(--border);border-radius:16px;box-shadow:0 24px 60px -20px rgba(14,15,19,.45);overflow:hidden}
+  .modal-head{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid var(--hair)}
+  .modal-head h3{font-size:16px;font-weight:700}
+  .modal-close{width:32px;height:32px;border:none;background:none;cursor:pointer;color:var(--muted);font-size:16px;border-radius:8px;line-height:1}
+  .modal-close:hover{background:var(--panel);color:var(--text)}
+  .modal-body{padding:18px}
+  .set-mail{font-size:13.5px;color:var(--muted);text-align:center;margin-bottom:14px;word-break:break-word}
+  .btn-logout{width:100%;padding:13px;border:1px solid var(--border);background:#fff;color:#e5484d;font-family:var(--font);font-weight:600;font-size:14.5px;border-radius:10px;cursor:pointer;transition:.15s}
+  .btn-logout:hover{background:#fff5f5;border-color:#f3c2c4}
 </style>
 </head>
 <body>
@@ -132,6 +145,7 @@
         <a href="#" data-nav="historique">Historique</a>
         <a href="#" data-nav="parametres">Paramètres</a>
         <a href="#" data-nav="facturation">Facturation</a>
+        <a href="#" data-nav="shop">Shop</a>
       </nav>
       <div class="nav-end">
         <button class="burger" id="burgerBtn" aria-label="Menu" aria-expanded="false">
@@ -144,9 +158,20 @@
       <a href="#" data-nav="historique">Historique</a>
       <a href="#" data-nav="parametres">Paramètres</a>
       <a href="#" data-nav="facturation">Facturation</a>
+      <a href="#" data-nav="shop">Shop</a>
     </div>
   </div>
 </header>
+
+<div class="modal-overlay" id="settingsModal">
+  <div class="modal">
+    <div class="modal-head"><h3>Paramètres</h3><button class="modal-close" id="settingsClose" aria-label="Fermer">✕</button></div>
+    <div class="modal-body">
+      <div class="set-mail" id="setMail"></div>
+      <button class="btn-logout js-logout" type="button">Se déconnecter</button>
+    </div>
+  </div>
+</div>
 
 <main>
   <div class="wrap">
@@ -191,7 +216,7 @@
     USER = u;
     const name = (u.user_metadata && (u.user_metadata.name || u.user_metadata.full_name)) || (u.email ? u.email.split("@")[0] : "Mon compte");
     const setT=(id,v)=>{const el=document.getElementById(id); if(el) el.textContent=v;};
-    setT("menuMail", u.email||name);
+    setT("setMail", u.email||name);
     localStorage.setItem("vendora_user", JSON.stringify({id:u.id,name:name,email:u.email||""}));
     loadCredits();
   }
@@ -217,6 +242,16 @@
     document.addEventListener("click",e=>{ if(!nav.contains(e.target)) close(); });
   })();
   document.querySelectorAll(".js-logout").forEach(el=>el.addEventListener("click",async e=>{e.preventDefault();await sb.auth.signOut();localStorage.removeItem("vendora_user");window.location.href="index.html";}));
+
+  // onglet Paramètres -> modale (avec déconnexion)
+  (function(){
+    const modal=document.getElementById("settingsModal");
+    if(!modal) return;
+    const close=()=>modal.classList.remove("show");
+    document.querySelectorAll('[data-nav="parametres"]').forEach(a=>a.addEventListener("click",e=>{e.preventDefault();modal.classList.add("show");}));
+    document.getElementById("settingsClose").addEventListener("click",close);
+    modal.addEventListener("click",e=>{ if(e.target===modal) close(); });
+  })();
 
   const file=document.getElementById("file");
   const preview=document.getElementById("preview"),importLabel=document.getElementById("importLabel"),go=document.getElementById("go");
