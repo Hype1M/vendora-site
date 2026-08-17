@@ -125,9 +125,11 @@
     </div>
     <div class="mob-menu" id="mobMenu">
       <div class="mob-user"><span id="menuMail">&nbsp;</span></div>
-      <div class="mob-cr-line"><b id="creditCount">…</b> crédits</div>
-      <a href="index.html">Accueil</a>
-      <a href="pricing.html">Mes crédits &amp; facturation</a>
+      <a href="app.html" data-nav="generation">Génération</a>
+      <a href="#" data-nav="historique">Historique</a>
+      <a href="#" data-nav="parametres">Paramètres</a>
+      <a href="#" data-nav="discord">Discord</a>
+      <a href="#" data-nav="affiliation">Affiliation</a>
       <a href="index.html" id="logout">Déconnexion</a>
     </div>
   </div>
@@ -170,7 +172,7 @@
   let USER = null, TOKEN = null, credits = null, plan = null;
 
   function creditsLabel(){ if(plan==="ultimate") return "∞"; if(credits===null) return "…"; try{return credits.toLocaleString("fr-FR");}catch(e){return String(credits);} }
-  function paintCredits(){ document.getElementById("creditCount").textContent = creditsLabel(); }
+  function paintCredits(){ const el=document.getElementById("creditCount"); if(el) el.textContent = creditsLabel(); }
 
   function fillUser(u){
     USER = u;
