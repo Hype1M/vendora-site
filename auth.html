@@ -16,41 +16,41 @@
     --font:"Plus Jakarta Sans",system-ui,sans-serif;
   }
   *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:var(--font);font-weight:400;background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased;letter-spacing:-.011em;min-height:100vh;display:flex;flex-direction:column}
+  body{font-family:var(--font);font-weight:400;background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased;letter-spacing:-.011em;height:100vh;height:100dvh;overflow:hidden;display:flex;flex-direction:column}
   a{color:inherit;text-decoration:none}
 
-  .top{padding:22px 30px}
+  .top{padding:14px 24px}
   .logo{display:inline-flex;align-items:center;gap:9px;font-weight:700;font-size:18px}
   .logo .mark{width:28px;height:28px;border-radius:8px;background:var(--text);display:grid;place-items:center}
   .logo .mark svg{width:16px;height:16px}
   .logo .ai{color:var(--faint);font-weight:600}
 
   .center{flex:1;display:grid;place-items:center;padding:20px}
-  .card{width:100%;max-width:400px;background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:34px;box-shadow:0 1px 2px rgba(14,15,19,.04),0 20px 50px -30px rgba(14,15,19,.35)}
+  .card{width:100%;max-width:400px;background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:24px;box-shadow:0 1px 2px rgba(14,15,19,.04),0 20px 50px -30px rgba(14,15,19,.35)}
   .card h1{font-size:22px;font-weight:700;letter-spacing:-.02em;text-align:center;margin-bottom:6px}
-  .card .lead{text-align:center;color:var(--muted);font-size:14px;margin-bottom:24px}
+  .card .lead{text-align:center;color:var(--muted);font-size:14px;margin-bottom:16px}
 
-  .tabs{display:flex;background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:4px;margin-bottom:22px}
+  .tabs{display:flex;background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:4px;margin-bottom:14px}
   .tab{flex:1;text-align:center;padding:9px;border-radius:7px;font-weight:600;font-size:14px;color:var(--muted);cursor:pointer;transition:.15s;border:none;background:none;font-family:var(--font)}
   .tab.active{background:#fff;color:var(--text);box-shadow:0 1px 2px rgba(14,15,19,.08)}
 
   .gbtn{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;border:1px solid var(--border-2);background:#fff;color:var(--text);border-radius:10px;padding:12px;font-family:var(--font);font-weight:600;font-size:14.5px;cursor:pointer;transition:.15s;-webkit-appearance:none;appearance:none}
   .gbtn:hover{background:var(--panel)}
   .gbtn svg{width:18px;height:18px}
-  .sep{display:flex;align-items:center;gap:12px;color:var(--faint);font-size:12px;margin:18px 0}
+  .sep{display:flex;align-items:center;gap:12px;color:var(--faint);font-size:12px;margin:12px 0}
   .sep::before,.sep::after{content:"";flex:1;height:1px;background:var(--hair)}
 
   label{display:block;font-size:13px;font-weight:600;color:var(--muted);margin:0 0 7px}
-  .field{margin-bottom:16px}
+  .field{margin-bottom:11px}
   input{width:100%;font-family:var(--font);font-size:15px;padding:12px 14px;border:1px solid var(--border-2);border-radius:10px;background:#fff;outline:none;transition:.15s}
   input:focus{border-color:var(--text)}
   .submit{width:100%;background:var(--text);color:#fff;border:none;border-radius:10px;padding:13px;font-family:var(--font);font-weight:600;font-size:15px;cursor:pointer;transition:.15s;margin-top:4px}
   .submit:hover{background:#25262c}
   .fine{text-align:center;color:var(--faint);font-size:12px;margin-top:16px}
   .fine a{color:var(--muted);text-decoration:underline}
-  .switch{text-align:center;font-size:13.5px;color:var(--muted);margin-top:18px}
+  .switch{text-align:center;font-size:13.5px;color:var(--muted);margin-top:12px}
   .switch a{color:var(--text);font-weight:600;cursor:pointer}
-  .back{display:inline-flex;align-items:center;gap:6px;color:var(--muted);font-size:13px;margin-top:22px}
+  .back{display:inline-flex;align-items:center;gap:6px;color:var(--muted);font-size:13px;margin-top:14px}
   .back:hover{color:var(--text)}
   .back svg{width:15px;height:15px}
   .name-field{display:none}
