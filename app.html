@@ -91,27 +91,40 @@
   .head h1 .k{color:var(--brand)}
   .head p{color:var(--muted);font-size:15.5px}
 
-  /* éditeur posé directement sur le fond de l'app (pas de carte) */
-  .tool{max-width:520px;margin:0 auto;text-align:center}
-  .preview{display:none;border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:18px;background:#fff}
+  /* éditeur */
+  .tool{max-width:540px;margin:0 auto}
+  /* zone d'import (glisser-déposer) */
+  .drop{position:relative;display:block;width:100%;min-height:300px;border:2px dashed var(--border-2);border-radius:20px;background:#fff;cursor:pointer;overflow:hidden;transition:border-color .15s,background .15s}
+  .drop:hover,.drop.drag{border-color:var(--text);background:var(--panel)}
+  .drop-hint{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;text-align:center;padding:24px;pointer-events:none}
+  .drop-ic{width:58px;height:58px;border-radius:16px;background:var(--text);display:grid;place-items:center;margin-bottom:8px}
+  .drop-ic svg{width:26px;height:26px;color:#fff}
+  .drop-hint b{font-size:16.5px;font-weight:600}
+  .drop-sub{color:var(--muted);font-size:13.5px}
+  .preview{display:none}
   .preview.show{display:block}
-  .preview img{width:100%;display:block;max-height:70vh;object-fit:cover}
-  .import-btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;margin:0 auto;padding:16px 30px;border:none;border-radius:12px;background:var(--text);color:#fff;cursor:pointer;font-family:var(--font);font-weight:600;font-size:15px;transition:background .15s}
-  .import-btn:hover{background:#25262c}
-  .import-btn svg{width:18px;height:18px}
+  .preview img{width:100%;display:block;max-height:62vh;object-fit:contain;background:var(--panel)}
+  .drop:has(.preview.show){min-height:0;border-style:solid;border-color:var(--border);background:#fff}
+  .drop:has(.preview.show) .drop-hint{display:none}
+  .drop:has(.preview.show)::after{content:"Changer de photo";position:absolute;left:0;right:0;bottom:0;padding:26px 10px 12px;background:linear-gradient(transparent,rgba(14,15,19,.55));color:#fff;font-size:13px;font-weight:600;text-align:center;opacity:0;transition:opacity .15s;pointer-events:none}
+  .drop:has(.preview.show):hover::after{opacity:1}
 
-  /* bloc de choix des fonds */
-  .bgpick{margin-top:64px;background:#fff;border:1px solid var(--border);border-radius:16px;padding:24px;text-align:left;box-shadow:0 1px 2px rgba(14,15,19,.04),0 18px 40px -30px rgba(14,15,19,.3)}
-  .bgpick-label{font-size:11.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);display:block;margin-bottom:16px}
-  .bgs{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-  .bg{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--border);border-radius:12px;padding:10px 14px 10px 10px;font-family:var(--font);font-size:13.5px;font-weight:500;color:var(--muted);cursor:pointer;transition:.15s}
-  .bg:hover{color:var(--text);border-color:var(--faint)}
-  .bg.active{border-color:var(--text);color:var(--text)}
-  .bg .sw{width:28px;height:28px;border-radius:8px;border:1px solid var(--border-2);background-size:cover;background-position:center;flex-shrink:0}
+  /* choix des fonds : vignettes avec aperçu */
+  .bgpick{margin-top:22px}
+  .bgpick-label{font-size:11.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);display:block;margin-bottom:12px}
+  .bgs{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  .bg{display:flex;flex-direction:column;gap:7px;padding:7px;background:#fff;border:1.5px solid var(--border);border-radius:14px;cursor:pointer;font-family:var(--font);transition:border-color .15s,transform .12s}
+  .bg:hover{border-color:var(--faint);transform:translateY(-1px)}
+  .bg.active{border-color:var(--text)}
+  .bg-thumb{width:100%;height:64px;border-radius:9px;background-size:cover;background-position:center;border:1px solid var(--border-2)}
+  .bg-name{font-size:12.5px;font-weight:600;color:var(--muted)}
+  .bg.active .bg-name{color:var(--text)}
+  @media(max-width:520px){ .bgs{grid-template-columns:1fr 1fr} .bg-thumb{height:74px} }
 
-  .go{width:100%;margin-top:28px;padding:15px;font-size:15px;font-weight:600;font-family:var(--font);cursor:pointer;border:none;border-radius:12px;background:var(--text);color:#fff;transition:background .15s}
+  .go{width:100%;margin-top:22px;padding:16px;font-size:15.5px;font-weight:600;font-family:var(--font);cursor:pointer;border:none;border-radius:14px;background:var(--text);color:#fff;transition:background .15s,transform .1s;box-shadow:0 12px 26px -12px rgba(14,15,19,.55)}
   .go:hover{background:#25262c}
-  .go:disabled{background:var(--panel);color:var(--faint);border:1px solid var(--border);cursor:not-allowed}
+  .go:active{transform:translateY(1px)}
+  .go:disabled{background:var(--panel);color:var(--faint);border:1px solid var(--border);box-shadow:none;cursor:not-allowed}
   .go:disabled:hover{background:var(--panel)}
   .hint{display:flex;align-items:center;justify-content:center;gap:6px;text-align:center;color:var(--faint);font-size:12.5px;margin-top:12px}
   .hint svg{width:14px;height:14px;color:var(--brand)}
@@ -176,20 +189,23 @@
 <main>
   <div class="wrap">
     <div class="tool" id="editor">
-      <div class="preview" id="preview"></div>
-      <label class="import-btn" id="importBtn">
+      <label class="drop" id="importBtn">
         <input type="file" id="file" accept="image/*" hidden />
-        <svg viewBox="0 0 24 24" fill="none"><path d="M12 16V4m0 0 4 4m-4-4-4 4" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 15v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
-        <span id="importLabel">Importer une photo</span>
+        <div class="preview" id="preview"></div>
+        <div class="drop-hint">
+          <div class="drop-ic"><svg viewBox="0 0 24 24" fill="none"><path d="M12 16V4m0 0 4 4m-4-4-4 4" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 15v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg></div>
+          <b id="importLabel">Importe ta photo</b>
+          <span class="drop-sub">Glisse-la ici ou clique pour choisir</span>
+        </div>
       </label>
 
       <div class="bgpick">
-        <span class="bgpick-label">Le fond</span>
+        <span class="bgpick-label">Choisis un fond</span>
         <div class="bgs">
-          <button class="bg" data-bg="parquet"><span class="sw" style="background-image:url('backgrounds/parquet.jpg')"></span>Parquet</button>
-          <button class="bg" data-bg="moquette"><span class="sw" style="background-image:url('backgrounds/moquette.jpg')"></span>Moquette</button>
-          <button class="bg" data-bg="solbrut"><span class="sw" style="background-image:url('backgrounds/solbrut.jpg')"></span>Sol brut</button>
-          <button class="bg" data-bg="tapis"><span class="sw" style="background-image:url('backgrounds/tapis.png')"></span>Tapis</button>
+          <button class="bg" data-bg="parquet"><span class="bg-thumb" style="background-image:url('backgrounds/parquet.jpg')"></span><span class="bg-name">Parquet</span></button>
+          <button class="bg" data-bg="moquette"><span class="bg-thumb" style="background-image:url('backgrounds/moquette.jpg')"></span><span class="bg-name">Moquette</span></button>
+          <button class="bg" data-bg="solbrut"><span class="bg-thumb" style="background-image:url('backgrounds/solbrut.jpg')"></span><span class="bg-name">Sol brut</span></button>
+          <button class="bg" data-bg="tapis"><span class="bg-thumb" style="background-image:url('backgrounds/tapis.png')"></span><span class="bg-name">Tapis</span></button>
         </div>
       </div>
 
@@ -270,6 +286,17 @@
     updateGo();
   }
   file.addEventListener("change",render);
+  // glisser-déposer sur la zone d'import
+  (function(){
+    const drop=document.getElementById("importBtn");
+    if(!drop) return;
+    ["dragenter","dragover"].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.add("drag");}));
+    ["dragleave","dragend"].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove("drag");}));
+    drop.addEventListener("drop",e=>{
+      e.preventDefault();drop.classList.remove("drag");
+      if(e.dataTransfer.files && e.dataTransfer.files[0]){ file.files=e.dataTransfer.files; render(); }
+    });
+  })();
   document.getElementById("resetBtn")?.addEventListener("click",()=>{ location.reload(); });
   function showResult(url){
     preview.innerHTML='<img src="'+url+'" alt="résultat">';
