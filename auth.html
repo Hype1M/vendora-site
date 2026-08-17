@@ -84,10 +84,6 @@
         <div class="sep">ou</div>
 
         <form onsubmit="submitForm(event)">
-          <div class="field name-field">
-            <label>Nom</label>
-            <input type="text" placeholder="Ton nom" />
-          </div>
           <div class="field">
             <label>E-mail</label>
             <input type="email" placeholder="toi@exemple.com" required />
@@ -163,14 +159,13 @@
   async function submitForm(e){
     e.preventDefault();
     const signup = document.body.classList.contains("signup");
-    const inputs = e.target.querySelectorAll("input"); // [0]=nom (masqué en connexion), [1]=email, [2]=mdp
-    const name = inputs[0].value.trim();
-    const email = inputs[1].value.trim();
-    const password = inputs[2].value;
+    const inputs = e.target.querySelectorAll("input"); // [0]=email, [1]=mdp
+    const email = inputs[0].value.trim();
+    const password = inputs[1].value;
     setBusy(true); showError("");
     try{
       if(signup){
-        const { data, error } = await sb.auth.signUp({ email, password, options:{ data:{ name: name || email.split("@")[0] } } });
+        const { data, error } = await sb.auth.signUp({ email, password, options:{ data:{ name: email.split("@")[0] } } });
         if(error) throw error;
         if(data.session){ cacheUser(data.session.user); window.location.href="app.html"; return; }
         // pas de session (confirmation e-mail activée) → on tente une connexion directe
