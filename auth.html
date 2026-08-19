@@ -112,9 +112,9 @@
     document.body.classList.toggle("signup", signup);
     document.getElementById("tab-login").classList.toggle("active", !signup);
     document.getElementById("tab-signup").classList.toggle("active", signup);
-    document.getElementById("title").textContent = signup ? "Crée ton compte" : "Bon retour 👋";
+    document.getElementById("title").textContent = signup ? "Crée ton compte 🚀" : "Bon retour 👋";
     document.getElementById("lead").textContent = signup ? "Inscris-toi pour commencer à améliorer tes photos." : "Connecte-toi pour améliorer tes photos.";
-    document.getElementById("submitBtn").textContent = signup ? "Créer mon compte 🚀" : "Se connecter";
+    document.getElementById("submitBtn").textContent = signup ? "Créer mon compte" : "Se connecter";
     document.getElementById("switch").innerHTML = signup
       ? 'Déjà un compte ? <a onclick="setMode(\'login\')">Connecte-toi</a>'
       : 'Pas encore de compte ? <a onclick="setMode(\'signup\')">Inscris-toi</a>';
