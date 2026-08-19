@@ -141,6 +141,8 @@
   .set-mail{font-size:13.5px;color:var(--muted);text-align:center;margin-bottom:14px;word-break:break-word}
   .btn-logout{width:100%;padding:13px;border:1px solid var(--border);background:#fff;color:#e5484d;font-family:var(--font);font-weight:600;font-size:14.5px;border-radius:10px;cursor:pointer;transition:.15s}
   .btn-logout:hover{background:#fff5f5;border-color:#f3c2c4}
+  .soon-emoji{font-size:40px;margin:6px 0 10px}
+  .soon-text{font-size:15px;font-weight:600;color:var(--text)}
 </style>
 </head>
 <body>
@@ -182,6 +184,16 @@
     <div class="modal-body">
       <div class="set-mail" id="setMail"></div>
       <button class="btn-logout js-logout" type="button">Se déconnecter</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="soonModal">
+  <div class="modal">
+    <div class="modal-head"><h3>Shop</h3><button class="modal-close" id="soonClose" aria-label="Fermer">✕</button></div>
+    <div class="modal-body" style="text-align:center">
+      <div class="soon-emoji">🛍️</div>
+      <p class="soon-text">Bientôt disponible</p>
     </div>
   </div>
 </div>
@@ -265,6 +277,16 @@
     const close=()=>modal.classList.remove("show");
     document.querySelectorAll('[data-nav="parametres"]').forEach(a=>a.addEventListener("click",e=>{e.preventDefault();modal.classList.add("show");}));
     document.getElementById("settingsClose").addEventListener("click",close);
+    modal.addEventListener("click",e=>{ if(e.target===modal) close(); });
+  })();
+
+  // onglet Shop -> "bientôt disponible"
+  (function(){
+    const modal=document.getElementById("soonModal");
+    if(!modal) return;
+    const close=()=>modal.classList.remove("show");
+    document.querySelectorAll('[data-nav="shop"]').forEach(a=>a.addEventListener("click",e=>{e.preventDefault();modal.classList.add("show");}));
+    document.getElementById("soonClose").addEventListener("click",close);
     modal.addEventListener("click",e=>{ if(e.target===modal) close(); });
   })();
 
