@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Vendora.ai — Améliore ta photo</title>
+<title>Shop — Vendora.ai</title>
 <meta name="robots" content="noindex" />
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -143,6 +143,11 @@
   .btn-logout:hover{background:#fff5f5;border-color:#f3c2c4}
   .soon-emoji{font-size:40px;margin:6px 0 10px}
   .soon-text{font-size:15px;font-weight:600;color:var(--text)}
+  /* page Shop indisponible — style accueil */
+  .soon-page{text-align:center;max-width:640px}
+  .soon-eyebrow{font-size:13px;font-weight:600;color:var(--muted);letter-spacing:.02em;margin-bottom:22px}
+  .soon-h1{font-weight:700;letter-spacing:-.035em;line-height:1.06;font-size:clamp(38px,6vw,64px);margin-bottom:22px}
+  .soon-sub{color:var(--muted);font-weight:400;font-size:clamp(16px,1.7vw,18px)}
 </style>
 </head>
 <body>
@@ -188,31 +193,21 @@
   </div>
 </div>
 
-<main>
-  <div class="wrap">
-    <div class="tool" id="editor">
-      <label class="drop" id="importBtn">
-        <input type="file" id="file" accept="image/*" hidden />
-        <div class="preview" id="preview"></div>
-        <div class="drop-hint">
-          <div class="drop-ic"><svg viewBox="0 0 24 24" fill="none"><path d="M12 16V4m0 0 4 4m-4-4-4 4" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 15v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg></div>
-          <b id="importLabel">Importe ta photo</b>
-          <span class="drop-sub">Glisse-la ici ou clique pour choisir</span>
-        </div>
-      </label>
-
-      <div class="bgpick">
-        <span class="bgpick-label">Choisis un fond</span>
-        <div class="bgs">
-          <button class="bg" data-bg="parquet"><span class="bg-thumb" style="background-image:url('backgrounds/parquet.jpg')"></span><span class="bg-name">Parquet</span></button>
-          <button class="bg" data-bg="moquette"><span class="bg-thumb" style="background-image:url('backgrounds/moquette.jpg')"></span><span class="bg-name">Moquette</span></button>
-          <button class="bg" data-bg="solbrut"><span class="bg-thumb" style="background-image:url('backgrounds/solbrut.jpg')"></span><span class="bg-name">Sol brut</span></button>
-          <button class="bg" data-bg="tapis"><span class="bg-thumb" style="background-image:url('backgrounds/tapis.png')"></span><span class="bg-name">Tapis</span></button>
-        </div>
-      </div>
-
-      <button class="go" id="go" disabled>Améliorer ma photo</button>
+<div class="modal-overlay" id="soonModal">
+  <div class="modal">
+    <div class="modal-head"><h3>Shop</h3><button class="modal-close" id="soonClose" aria-label="Fermer">✕</button></div>
+    <div class="modal-body" style="text-align:center">
+      <div class="soon-emoji">🛍️</div>
+      <p class="soon-text">Bientôt disponible</p>
     </div>
+  </div>
+</div>
+
+<main>
+  <div class="wrap soon-page">
+    <p class="soon-eyebrow">Shop Vendora</p>
+    <h1 class="soon-h1">Bientôt disponible<span style="color:var(--brand)">.</span></h1>
+    <p class="soon-sub">La boutique arrive très vite. Reste connecté 👀</p>
   </div>
 </main>
 
@@ -270,86 +265,16 @@
     modal.addEventListener("click",e=>{ if(e.target===modal) close(); });
   })();
 
-
-  const file=document.getElementById("file");
-  const preview=document.getElementById("preview"),importLabel=document.getElementById("importLabel"),go=document.getElementById("go");
-  let bg=null;
-  function updateGo(){ go.disabled = !(file.files && file.files[0] && bg); }
-  document.querySelectorAll(".bg").forEach(b=>b.addEventListener("click",()=>{
-    document.querySelectorAll(".bg").forEach(x=>x.classList.remove("active"));
-    b.classList.add("active");bg=b.dataset.bg;updateGo();
-  }));
-  function render(){
-    const f=file.files&&file.files[0];
-    if(!f) return;
-    const url=URL.createObjectURL(f);
-    preview.innerHTML='<img src="'+url+'" alt="aperçu">';
-    preview.classList.add("show");
-    importLabel.textContent="Changer de photo";
-    updateGo();
-  }
-  file.addEventListener("change",render);
-  // glisser-déposer sur la zone d'import
+  // onglet Shop -> "bientôt disponible"
   (function(){
-    const drop=document.getElementById("importBtn");
-    if(!drop) return;
-    ["dragenter","dragover"].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.add("drag");}));
-    ["dragleave","dragend"].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove("drag");}));
-    drop.addEventListener("drop",e=>{
-      e.preventDefault();drop.classList.remove("drag");
-      if(e.dataTransfer.files && e.dataTransfer.files[0]){ file.files=e.dataTransfer.files; render(); }
-    });
+    const modal=document.getElementById("soonModal");
+    if(!modal) return;
+    const close=()=>modal.classList.remove("show");
+    document.querySelectorAll('[data-nav="shop"]').forEach(a=>a.addEventListener("click",e=>{e.preventDefault();modal.classList.add("show");}));
+    document.getElementById("soonClose").addEventListener("click",close);
+    modal.addEventListener("click",e=>{ if(e.target===modal) close(); });
   })();
-  document.getElementById("resetBtn")?.addEventListener("click",()=>{ location.reload(); });
-  function showResult(url){
-    preview.innerHTML='<img src="'+url+'" alt="résultat">';
-    preview.classList.add("show");
-    importLabel.textContent="Nouvelle photo";
-    // bouton de téléchargement
-    let dl=document.getElementById("dlBtn");
-    if(!dl){ dl=document.createElement("a"); dl.id="dlBtn"; dl.className="go"; document.getElementById("editor").appendChild(dl); }
-    dl.textContent="Télécharger"; dl.href=url; dl.download="vendora.png"; dl.style.display="block";
-  }
 
-  go.addEventListener("click",async ()=>{
-    if(!file.files||!file.files[0]||!bg){ return; }
-    if(!TOKEN){ alert("Session expirée, reconnecte-toi."); location.href="auth.html"; return; }
-    if(plan!=="ultimate" && credits!==null && credits < COST){
-      alert("Crédits insuffisants — il faut "+COST+" crédits par génération (solde : "+credits+").");
-      location.href="index.html#pricing"; return;
-    }
-    go.disabled=true; const prev=go.textContent; go.textContent="Amélioration… (jusqu'à 3 min)";
-    try{
-      // génération via le backend Vercel — il vérifie le token, décompte les crédits
-      // côté serveur et renvoie l'image (ou 402 si crédits épuisés).
-      const fd=new FormData();
-      fd.append("image1", file.files[0], file.files[0].name||"photo.png");
-      fd.append("background", bg);
-      const r=await fetch(BACKEND+"/api/generate",{
-        method:"POST",
-        headers:{ "Authorization":"Bearer "+TOKEN },
-        body:fd
-      });
-      if(r.status===402){ // crédits épuisés → paywall
-        alert("Crédits insuffisants — recharge ton forfait pour continuer.");
-        location.href="index.html#pricing"; return;
-      }
-      const ct=r.headers.get("content-type")||"";
-      if(!(r.ok && ct.indexOf("image/")===0)){
-        let msg="Échec de la génération ("+r.status+").";
-        try{ const j=await r.json(); if(j&&j.error) msg=j.error; }catch(e){}
-        alert(msg); return;
-      }
-      const blob=await r.blob();
-      // affiche le résultat puis rafraîchit le solde (mis à jour côté serveur)
-      showResult(URL.createObjectURL(blob));
-      loadCredits();
-    }catch(err){
-      alert("Impossible de contacter le serveur (il démarrait peut-être — réessaie dans quelques secondes).");
-    }finally{
-      go.disabled=false; go.textContent=prev;
-    }
-  });
 </script>
 <!-- Vercel Web Analytics -->
 <script>window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments);};</script>
