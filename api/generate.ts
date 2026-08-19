@@ -1,6 +1,16 @@
-import sharp from "sharp";
 import { getSupabaseAdmin, getSupabaseAnon } from "../lib/supabaseAdmin";
 import { json, binary, preflight, bearer } from "../lib/http";
+
+// Vérifie que la config serveur est présente (message clair si une variable manque).
+function missingEnv(): string | null {
+  const need = [
+    "NEXT_PUBLIC_SUPABASE_URL",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+  ];
+  const missing = need.filter((k) => !process.env[k]);
+  return missing.length ? `Config serveur manquante : ${missing.join(", ")}.` : null;
+}
 
 // Le backend Render peut mettre jusqu'à ~180s (cold start + génération Gemini).
 // maxDuration est fixé dans vercel.json (300s, Vercel Pro requis pour >60s).
@@ -35,6 +45,9 @@ async function deduct(userId: string, amount: number): Promise<number | null> {
 
 async function post(req: Request): Promise<Response> {
   try {
+    const envErr = missingEnv();
+    if (envErr) return json({ error: envErr }, 500);
+
     // 1) Identifier l'utilisateur (token Supabase).
     const token = bearer(req);
     const {
@@ -156,11 +169,20 @@ async function post(req: Request): Promise<Response> {
     const path = `${user.id}.png`;
     const thumbPath = `${user.id}_thumb.jpg`;
 
-    const blurred = await sharp(buffer)
-      .resize(720, null, { withoutEnlargement: true })
-      .blur(18)
-      .jpeg({ quality: 60 })
-      .toBuffer();
+    let blurred: Buffer;
+    try {
+      const sharp = (await import("sharp")).default;
+      blurred = await sharp(buffer)
+        .resize(720, null, { withoutEnlargement: true })
+        .blur(18)
+        .jpeg({ quality: 60 })
+        .toBuffer();
+    } catch (e: unknown) {
+      // sharp indisponible → on annule la réservation d'aperçu et on remonte l'erreur.
+      await getSupabaseAdmin().from("free_previews").delete().eq("user_id", user.id);
+      const m = e instanceof Error ? e.message : "sharp indisponible";
+      return json({ error: `Traitement image impossible : ${m}` }, 500);
+    }
 
     await admin.storage.from("previews").upload(path, new Uint8Array(buffer), {
       contentType: contentType || "image/png",
