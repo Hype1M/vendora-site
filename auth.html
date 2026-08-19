@@ -19,7 +19,17 @@
   body{font-family:var(--font);font-weight:400;background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased;letter-spacing:-.011em;height:100vh;height:100dvh;overflow:hidden;display:flex;flex-direction:column}
   a{color:inherit;text-decoration:none}
 
-  .top{padding:14px 24px}
+  .top{display:flex;align-items:center;justify-content:space-between;padding:14px 24px}
+  .lang{position:relative}
+  .lang-btn{display:flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--border);border-radius:999px;padding:6px 11px;cursor:pointer;font-family:var(--font);font-weight:600;font-size:13px;color:var(--text);transition:border-color .15s}
+  .lang-btn:hover{border-color:var(--faint)}
+  .lang-btn svg{width:15px;height:15px;color:var(--muted)}
+  .lang-btn .lang-chev{width:13px;height:13px;transition:transform .15s}
+  .lang.open .lang-btn .lang-chev{transform:rotate(180deg)}
+  .lang-menu{position:absolute;top:calc(100% + 8px);right:0;min-width:150px;background:#fff;border:1px solid var(--border);border-radius:12px;box-shadow:0 16px 40px -16px rgba(14,15,19,.3);padding:6px;opacity:0;visibility:hidden;transform:translateY(-6px);transition:.15s;z-index:60}
+  .lang.open .lang-menu{opacity:1;visibility:visible;transform:translateY(0)}
+  .lang-menu button{display:block;width:100%;text-align:left;padding:9px 12px;border:none;background:none;border-radius:8px;font-family:var(--font);font-size:14px;font-weight:500;color:var(--text);cursor:pointer}
+  .lang-menu button:hover{background:var(--panel)}
   .logo{display:inline-flex;align-items:center;gap:9px;font-weight:700;font-size:18px}
   .logo .mark{width:28px;height:28px;border-radius:8px;background:var(--text);display:grid;place-items:center}
   .logo .mark svg{width:16px;height:16px}
@@ -62,6 +72,18 @@
     <a class="logo" href="index.html">
       <span class="mark"><svg viewBox="0 0 24 24" fill="none"><path d="M6 7l6 10.5L18 7" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="18.6" cy="5.4" r="1.7" fill="#5b8cff"/></svg></span>
     </a>
+    <div class="lang" id="lang">
+      <button class="lang-btn" id="langBtn" type="button">
+        <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.7"/><path d="M3 12h18M12 3c2.5 2.4 3.8 5.6 3.8 9S14.5 18.6 12 21c-2.5-2.4-3.8-5.6-3.8-9S9.5 5.4 12 3Z" stroke="currentColor" stroke-width="1.7"/></svg>
+        <span id="langLabel">FR</span>
+        <svg class="lang-chev" viewBox="0 0 24 24" fill="none"><path d="m6 9 6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="lang-menu" id="langMenu">
+        <button type="button" data-lang="FR">🇫🇷 Français</button>
+        <button type="button" data-lang="EN">🇬🇧 English</button>
+        <button type="button" data-lang="ES">🇪🇸 Español</button>
+      </div>
+    </div>
   </div>
 
   <div class="center">
@@ -121,6 +143,19 @@
   // pré-sélection via ?mode=signup
   // inscription par défaut (sauf ?mode=login)
   setMode(new URLSearchParams(location.search).get("mode")==="login" ? "login" : "signup");
+
+  // bulle de choix de langue
+  (function(){
+    const lang=document.getElementById("lang");
+    if(!lang) return;
+    const btn=document.getElementById("langBtn"), label=document.getElementById("langLabel");
+    btn.addEventListener("click",e=>{e.stopPropagation();lang.classList.toggle("open");});
+    lang.querySelectorAll(".lang-menu button").forEach(b=>b.addEventListener("click",()=>{
+      label.textContent=b.dataset.lang;
+      lang.classList.remove("open");
+    }));
+    document.addEventListener("click",()=>lang.classList.remove("open"));
+  })();
   /* ---------- Supabase ---------- */
   const SUPABASE_URL = "https://zipzllczqfcfvyydvmpy.supabase.co";
   const SUPABASE_ANON_KEY = "sb_publishable_ujJAZvyLdjDzFSWbwBguWw_f0yIMJvs";
