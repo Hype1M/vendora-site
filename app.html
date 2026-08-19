@@ -110,6 +110,14 @@
   .drop-ic svg{width:26px;height:26px}
   .drop-hint b{font-size:17px;font-weight:600}
   .drop-sub{color:var(--muted);font-size:13.5px}
+  /* overlay pendant la génération */
+  .gen-overlay{position:absolute;inset:0;z-index:3;display:none;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center;padding:24px;background:rgba(255,255,255,.9);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
+  .drop.gen{pointer-events:none}
+  .drop.gen .gen-overlay{display:flex}
+  .gen-overlay b{font-size:15.5px;font-weight:600}
+  .gen-overlay span{font-size:12.5px;color:var(--muted);max-width:260px}
+  .spinner{width:40px;height:40px;border-radius:50%;border:3px solid var(--border);border-top-color:var(--text);animation:vspin .8s linear infinite}
+  @keyframes vspin{to{transform:rotate(360deg)}}
   .preview{display:none}
   .preview.show{display:block;position:absolute;inset:0}
   .preview img{width:100%;height:100%;display:block;object-fit:cover}
@@ -213,6 +221,11 @@
           <div class="drop-ic"><svg viewBox="0 0 24 24" fill="none"><path d="M12 16V4m0 0 4 4m-4-4-4 4" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 15v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg></div>
           <b id="importLabel">Importe ta photo</b>
           <span class="drop-sub">Glisse-la ici ou clique pour choisir</span>
+        </div>
+        <div class="gen-overlay">
+          <div class="spinner"></div>
+          <b>Amélioration en cours…</b>
+          <span>jusqu'à 3 min (le serveur se réveille au 1er essai)</span>
         </div>
       </label>
 
@@ -333,7 +346,8 @@
       alert("Crédits insuffisants — il faut "+COST+" crédits par génération (solde : "+credits+").");
       location.href="index.html#pricing"; return;
     }
-    go.disabled=true; const prev=go.textContent; go.textContent="Amélioration… (jusqu'à 3 min)";
+    go.disabled=true; const prev=go.textContent; go.textContent="Amélioration…";
+    const dropEl=document.getElementById("importBtn"); dropEl.classList.add("gen");
     try{
       // génération via le backend Vercel — il vérifie le token, décompte les crédits
       // côté serveur et renvoie l'image (ou 402 si crédits épuisés).
@@ -362,6 +376,7 @@
     }catch(err){
       alert("Impossible de contacter le serveur (il démarrait peut-être — réessaie dans quelques secondes).");
     }finally{
+      dropEl.classList.remove("gen");
       go.disabled=false; go.textContent=prev;
     }
   });
