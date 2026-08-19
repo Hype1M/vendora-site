@@ -1,2 +1,14 @@
 .DS_Store
 *.log
+
+# dépendances & build des fonctions serverless
+node_modules
+.vercel
+.next
+out
+tsconfig.tsbuildinfo
+
+# secrets — NE JAMAIS committer
+.env
+.env.*
+!.env.example

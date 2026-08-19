@@ -218,7 +218,7 @@
   const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
   const COST = 100; // crédits par génération
-  const BACKEND = "https://vendorastudio-api.vercel.app"; // backend Next (Vercel) — CORS + auth + crédits serveur
+  const BACKEND = ""; // même origine : /api est servi par ce projet // backend Next (Vercel) — CORS + auth + crédits serveur
   let USER = null, TOKEN = null, credits = null, plan = null;
 
   function creditsLabel(){ if(plan==="ultimate") return "∞"; if(credits===null) return "…"; try{return credits.toLocaleString("fr-FR");}catch(e){return String(credits);} }
