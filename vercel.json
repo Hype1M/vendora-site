@@ -1,7 +1,7 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "functions": {
-    "api/generate.ts": { "maxDuration": 300, "memory": 1024 }
+    "api/generate.ts": { "maxDuration": 60, "memory": 1024 }
   },
   "headers": [
     {
