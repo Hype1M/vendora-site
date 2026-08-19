@@ -97,7 +97,6 @@
 
         <p class="fine" id="fine"></p>
 
-        <p class="switch" id="switch">Pas encore de compte ? <a onclick="setMode('signup')">Inscris-toi</a></p>
       </div>
 
       <div style="text-align:center">
@@ -115,9 +114,6 @@
     document.getElementById("title").textContent = signup ? "Crée ton compte 🚀" : "Bon retour 👋";
     document.getElementById("lead").textContent = signup ? "Inscris-toi pour commencer à améliorer tes photos." : "Connecte-toi pour améliorer tes photos.";
     document.getElementById("submitBtn").textContent = signup ? "Créer mon compte" : "Se connecter";
-    document.getElementById("switch").innerHTML = signup
-      ? 'Déjà un compte ? <a onclick="setMode(\'login\')">Connecte-toi</a>'
-      : 'Pas encore de compte ? <a onclick="setMode(\'signup\')">Inscris-toi</a>';
     document.getElementById("fine").innerHTML = signup
       ? 'En continuant, tu acceptes les <a href="#">Conditions</a> et la <a href="#">Confidentialité</a>.' : '';
   }
