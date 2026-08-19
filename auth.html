@@ -114,7 +114,7 @@
     document.getElementById("tab-signup").classList.toggle("active", signup);
     document.getElementById("title").textContent = signup ? "Crée ton compte" : "Bon retour 👋";
     document.getElementById("lead").textContent = signup ? "Inscris-toi pour commencer à améliorer tes photos." : "Connecte-toi pour améliorer tes photos.";
-    document.getElementById("submitBtn").textContent = signup ? "Créer mon compte" : "Se connecter";
+    document.getElementById("submitBtn").textContent = signup ? "Créer mon compte 🚀" : "Se connecter";
     document.getElementById("switch").innerHTML = signup
       ? 'Déjà un compte ? <a onclick="setMode(\'login\')">Connecte-toi</a>'
       : 'Pas encore de compte ? <a onclick="setMode(\'signup\')">Inscris-toi</a>';
@@ -124,7 +124,8 @@
   document.getElementById("tab-login").onclick=()=>setMode("login");
   document.getElementById("tab-signup").onclick=()=>setMode("signup");
   // pré-sélection via ?mode=signup
-  if(new URLSearchParams(location.search).get("mode")==="signup") setMode("signup");
+  // inscription par défaut (sauf ?mode=login)
+  setMode(new URLSearchParams(location.search).get("mode")==="login" ? "login" : "signup");
   /* ---------- Supabase ---------- */
   const SUPABASE_URL = "https://zipzllczqfcfvyydvmpy.supabase.co";
   const SUPABASE_ANON_KEY = "sb_publishable_ujJAZvyLdjDzFSWbwBguWw_f0yIMJvs";
