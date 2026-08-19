@@ -25,7 +25,7 @@
   .nav-scrim.show{opacity:1;visibility:visible;pointer-events:auto}
   header{position:sticky;top:0;z-index:50;margin-top:0}
   .nav{position:relative;display:flex;flex-direction:column;width:100%;background:#fff;border-bottom:1px solid var(--border);box-shadow:0 1px 0 var(--border)}
-  .nav-top{display:flex;align-items:center;justify-content:space-between;height:50px;padding:0 14px 0 16px}
+  .nav-top{display:flex;align-items:center;justify-content:space-between;height:56px;max-width:1120px;width:100%;margin:0 auto;padding:0 24px}
   .logo{display:flex;align-items:center;gap:8px;font-weight:700;font-size:16px}
   .logo .mark{width:24px;height:24px;border-radius:7px;background:var(--text);display:grid;place-items:center}
   .logo .mark svg{width:14px;height:14px}
@@ -91,6 +91,11 @@
   .head h1 .k{color:var(--brand)}
   .head p{color:var(--muted);font-size:15.5px}
 
+  /* en-tête façon landing */
+  .app-head{text-align:center;max-width:560px;margin:0 auto 28px}
+  .app-head .eyebrow{font-size:13px;font-weight:600;color:var(--muted);letter-spacing:.02em;margin-bottom:14px}
+  .app-head h1{font-weight:700;letter-spacing:-.03em;line-height:1.08;font-size:clamp(28px,4.6vw,42px);margin-bottom:10px}
+  .app-head .sub{color:var(--muted);font-weight:400;font-size:15.5px}
   /* éditeur */
   .tool{max-width:540px;margin:0 auto}
   /* zone d'import (glisser-déposer) */
@@ -157,9 +162,9 @@
       </a>
       <nav class="nav-links">
         <a href="app.html">Génération</a>
-        <a href="#" data-nav="historique">Historique</a>
+        <a href="historique.html">Historique</a>
         <a href="#" data-nav="parametres">Paramètres</a>
-        <a href="#" data-nav="facturation">Facturation</a>
+        <a href="facturation.html">Facturation</a>
         <a href="shop.html">Shop</a>
       </nav>
       <div class="nav-end">
@@ -170,9 +175,9 @@
     </div>
     <div class="mob-menu" id="mobMenu">
       <a href="app.html" data-nav="generation">Génération</a>
-      <a href="#" data-nav="historique">Historique</a>
+      <a href="historique.html">Historique</a>
       <a href="#" data-nav="parametres">Paramètres</a>
-      <a href="#" data-nav="facturation">Facturation</a>
+      <a href="facturation.html">Facturation</a>
       <a href="shop.html">Shop</a>
     </div>
   </div>
@@ -190,6 +195,11 @@
 
 <main>
   <div class="wrap">
+    <div class="app-head">
+      <p class="eyebrow">Retouche IA</p>
+      <h1>Améliore ta photo<span style="color:var(--brand)">.</span></h1>
+      <p class="sub">Importe ta photo, choisis un fond, laisse l'IA faire le reste.</p>
+    </div>
     <div class="tool" id="editor">
       <label class="drop" id="importBtn">
         <input type="file" id="file" accept="image/*" hidden />
