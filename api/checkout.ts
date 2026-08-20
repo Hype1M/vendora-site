@@ -1,3 +1,4 @@
+import { adapt } from "../lib/vercelAdapter";
 import Stripe from "stripe";
 import { getSupabaseAnon } from "../lib/supabaseAdmin";
 import { STRIPE_PRODUCTS, type ProductKey } from "../lib/stripeProducts";
@@ -59,8 +60,10 @@ async function post(req: Request): Promise<Response> {
   }
 }
 
-export default async function handler(req: Request): Promise<Response> {
+async function handler(req: Request): Promise<Response> {
   if (req.method === "OPTIONS") return preflight();
   if (req.method === "POST") return post(req);
   return json({ error: "Méthode non autorisée." }, 405);
 }
+
+export default adapt(handler);

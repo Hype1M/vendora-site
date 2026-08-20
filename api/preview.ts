@@ -1,3 +1,4 @@
+import { adapt } from "../lib/vercelAdapter";
 import { getSupabaseAdmin, getSupabaseAnon } from "../lib/supabaseAdmin";
 import { json, preflight, bearer } from "../lib/http";
 
@@ -38,8 +39,10 @@ async function get(req: Request): Promise<Response> {
   }
 }
 
-export default async function handler(req: Request): Promise<Response> {
+async function handler(req: Request): Promise<Response> {
   if (req.method === "OPTIONS") return preflight();
   if (req.method === "GET") return get(req);
   return json({ error: "Méthode non autorisée." }, 405);
 }
+
+export default adapt(handler);

@@ -1,3 +1,4 @@
+import { adapt } from "../../lib/vercelAdapter";
 import Stripe from "stripe";
 import { getSupabaseAdmin } from "../../lib/supabaseAdmin";
 
@@ -142,7 +143,9 @@ async function post(req: Request): Promise<Response> {
   }
 }
 
-export default async function handler(req: Request): Promise<Response> {
+async function handler(req: Request): Promise<Response> {
   if (req.method === "POST") return post(req);
   return new Response("Méthode non autorisée.", { status: 405 });
 }
+
+export default adapt(handler);
