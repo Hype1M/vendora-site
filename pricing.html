@@ -341,7 +341,7 @@
           <ul>
             <li><svg viewBox="0 0 24 24" fill="none"><path d="M20 6 9 17l-5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> 2 000 crédits / mois</li>
           </ul>
-          <a class="btn btn-line" href="auth.html">Choisir</a>
+          <button class="btn btn-line js-plan" data-plan="discovery">Choisir</button>
         </div>
         <div class="plan pro">
           <div class="ptop"><h3>Essentiel</h3><span class="tag">Populaire</span></div>
@@ -352,7 +352,7 @@
           <ul>
             <li><svg viewBox="0 0 24 24" fill="none"><path d="M20 6 9 17l-5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> 5 000 crédits / mois</li>
           </ul>
-          <a class="btn btn-primary" href="auth.html">Choisir</a>
+          <button class="btn btn-primary js-plan" data-plan="essential">Choisir</button>
         </div>
         <div class="plan">
           <div class="ptop"><h3>Ultimate</h3></div>
@@ -363,7 +363,7 @@
           <ul>
             <li><svg viewBox="0 0 24 24" fill="none"><path d="M20 6 9 17l-5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> Crédits illimités / mois</li>
           </ul>
-          <a class="btn btn-line" href="auth.html">Choisir</a>
+          <button class="btn btn-line js-plan" data-plan="ultimate">Choisir</button>
         </div>
       </div>
 
@@ -374,12 +374,12 @@
             <span class="tag">Populaire</span>
             <div class="rc-credits">800 crédits</div>
             <div class="rc-sub">Paiement unique · 9,90 €</div>
-            <a class="btn btn-primary" href="auth.html">Débloquer — 9,90 €</a>
+            <button class="btn btn-primary js-topup" data-topup="topup_800">Débloquer — 9,90 €</button>
           </div>
           <div class="recharge-card">
             <div class="rc-credits">2 000 crédits</div>
             <div class="rc-sub">Paiement unique · 19,90 €</div>
-            <a class="btn btn-line" href="auth.html">Débloquer — 19,90 €</a>
+            <button class="btn btn-line js-topup" data-topup="topup_2000">Débloquer — 19,90 €</button>
           </div>
         </div>
       </div>
@@ -468,6 +468,48 @@
       plans.classList.toggle("yearly",year);
       plans.querySelectorAll(".price-amount").forEach(el=>{el.textContent=year?el.dataset.y:el.dataset.m;});
     });
+  })();
+
+  // Paiement Stripe (abonnements + recharges) → /api/checkout
+  (function(){
+    const plans=document.querySelector(".plans");
+    const period=()=> plans && plans.classList.contains("yearly") ? "annual" : "monthly";
+    async function checkout(productKey, btn){
+      const { data:{ session } } = await sb.auth.getSession();
+      if(!session){ localStorage.setItem("vendora_intent", productKey); location.href="auth.html"; return; }
+      const label=btn.textContent;
+      btn.disabled=true; btn.style.opacity=".65"; btn.textContent="Redirection…";
+      try{
+        const r=await fetch("/api/checkout",{
+          method:"POST",
+          headers:{ "Content-Type":"application/json", "Authorization":"Bearer "+session.access_token },
+          body: JSON.stringify({ productKey })
+        });
+        const j=await r.json().catch(()=>({}));
+        if(!r.ok || !j.url) throw new Error(j.error || ("Erreur "+r.status));
+        location.href=j.url; // page de paiement Stripe
+      }catch(err){
+        btn.disabled=false; btn.style.opacity=""; btn.textContent=label;
+        alert("Paiement indisponible : "+err.message);
+      }
+    }
+    document.querySelectorAll(".js-plan").forEach(b=>
+      b.addEventListener("click",()=>checkout(b.dataset.plan+"_"+period(), b)));
+    document.querySelectorAll(".js-topup").forEach(b=>
+      b.addEventListener("click",()=>checkout(b.dataset.topup, b)));
+
+    // Retour depuis Stripe : petit bandeau + rafraîchit les crédits
+    const back=new URLSearchParams(location.search).get("checkout");
+    if(back){
+      const ok=back==="success";
+      const t=document.createElement("div");
+      t.textContent=ok?"✅ Paiement réussi — tes crédits ont été ajoutés.":"Paiement annulé.";
+      t.style.cssText="position:fixed;left:50%;top:20px;transform:translateX(-50%);z-index:200;background:"+(ok?"#0e0f13":"#6b6d78")+";color:#fff;padding:12px 22px;border-radius:12px;font-weight:600;font-size:14px;box-shadow:0 14px 34px -12px rgba(0,0,0,.45)";
+      document.body.appendChild(t);
+      setTimeout(()=>t.remove(),5000);
+      history.replaceState(null,"",location.pathname);
+      if(ok) sb.auth.getSession().then(({data})=>{ if(data.session) loadCredits(data.session.user.id); });
+    }
   })();
 </script>
 <!-- Vercel Web Analytics -->
