@@ -125,6 +125,14 @@
   .page-gen b{font-size:19px;font-weight:700;letter-spacing:-.02em}
   .page-gen span{font-size:13.5px;color:var(--muted);max-width:320px}
   @keyframes pgfade{from{opacity:0}to{opacity:1}}
+  /* résultat : affiché dans son format de sortie (pas de carré) */
+  .result{display:none;max-width:560px;margin:0 auto;flex-direction:column;align-items:center;gap:18px}
+  .result.show{display:flex}
+  .result img{max-width:100%;max-height:74vh;width:auto;height:auto;border-radius:18px;box-shadow:0 1px 2px rgba(14,15,19,.04),0 26px 60px -30px rgba(14,15,19,.45);display:block}
+  .result-actions{display:flex;gap:12px;width:100%;max-width:420px}
+  .result-actions .go{margin-top:0;flex:1}
+  .go-line{background:#fff;color:var(--text);border:1px solid var(--border);box-shadow:none}
+  .go-line:hover{background:var(--panel);border-color:var(--faint)}
   .preview{display:none}
   .preview.show{display:block;position:absolute;inset:0}
   .preview img{width:100%;height:100%;display:block;object-fit:cover}
@@ -239,6 +247,14 @@
 
       <button class="go" id="go" disabled>Améliorer ma photo</button>
     </div>
+
+    <div class="result" id="result">
+      <img id="resultImg" alt="résultat retouché">
+      <div class="result-actions">
+        <a class="go" id="dlBtn" download="vendora.png">Télécharger</a>
+        <button class="go go-line" id="againBtn" type="button">Nouvelle photo</button>
+      </div>
+    </div>
   </div>
 </main>
 
@@ -334,14 +350,14 @@
   })();
   document.getElementById("resetBtn")?.addEventListener("click",()=>{ location.reload(); });
   function showResult(url){
-    preview.innerHTML='<img src="'+url+'" alt="résultat">';
-    preview.classList.add("show");
-    importLabel.textContent="Nouvelle photo";
-    // bouton de téléchargement
-    let dl=document.getElementById("dlBtn");
-    if(!dl){ dl=document.createElement("a"); dl.id="dlBtn"; dl.className="go"; document.getElementById("editor").appendChild(dl); }
-    dl.textContent="Télécharger"; dl.href=url; dl.download="vendora.png"; dl.style.display="block";
+    // on masque tout l'éditeur (import + fonds + bouton) et on affiche le
+    // résultat dans son format de sortie naturel (pas de recadrage carré).
+    document.getElementById("editor").style.display="none";
+    document.getElementById("resultImg").src=url;
+    document.getElementById("dlBtn").href=url;
+    document.getElementById("result").classList.add("show");
   }
+  document.getElementById("againBtn").addEventListener("click",()=>location.reload());
 
   go.addEventListener("click",async ()=>{
     if(!file.files||!file.files[0]||!bg){ return; }
@@ -351,8 +367,11 @@
       location.href="index.html#pricing"; return;
     }
     go.disabled=true; const prev=go.textContent; go.textContent="Amélioration…";
-    const dropEl=document.getElementById("importBtn"); dropEl.classList.add("gen");
-    const pageGen=document.getElementById("pageGen"); pageGen.classList.add("show");
+    const editorEl=document.getElementById("editor");
+    const pageGen=document.getElementById("pageGen");
+    let ok=false;
+    editorEl.style.display="none";   // on enlève tout (import + fonds + bouton)
+    pageGen.classList.add("show");   // chargement plein écran sur le fond
     try{
       // génération via le backend Vercel — il vérifie le token, décompte les crédits
       // côté serveur et renvoie l'image (ou 402 si crédits épuisés).
@@ -377,12 +396,13 @@
       const blob=await r.blob();
       // affiche le résultat puis rafraîchit le solde (mis à jour côté serveur)
       showResult(URL.createObjectURL(blob));
+      ok=true;
       loadCredits();
     }catch(err){
       alert("Impossible de contacter le serveur (il démarrait peut-être — réessaie dans quelques secondes).");
     }finally{
-      dropEl.classList.remove("gen");
       pageGen.classList.remove("show");
+      if(!ok) editorEl.style.display="";   // échec → on remet l'éditeur
       go.disabled=false; go.textContent=prev;
     }
   });
