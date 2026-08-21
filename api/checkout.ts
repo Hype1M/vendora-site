@@ -12,9 +12,16 @@ function getStripe(): Stripe {
 
 async function post(req: Request): Promise<Response> {
   try {
-    const { productKey } = await req.json();
+    const { productKey, returnTo } = await req.json();
     const product = STRIPE_PRODUCTS[productKey as ProductKey];
     if (!product) return json({ error: "Produit inconnu." }, 400);
+
+    // Page de retour après paiement (même origine). On n'accepte qu'un chemin
+    // simple pour éviter toute redirection ouverte.
+    const ret =
+      typeof returnTo === "string" && /^\/[a-zA-Z0-9_\-./]*$/.test(returnTo)
+        ? returnTo
+        : "/pricing.html";
 
     // Identifier l'utilisateur via son access token Supabase.
     const token = bearer(req);
@@ -49,8 +56,8 @@ async function post(req: Request): Promise<Response> {
             },
           }
         : {}),
-      success_url: `${origin}/pricing.html?checkout=success`,
-      cancel_url: `${origin}/pricing.html?checkout=cancel`,
+      success_url: `${origin}${ret}?checkout=success`,
+      cancel_url: `${origin}${ret}?checkout=cancel`,
     });
 
     return json({ url: session.url });

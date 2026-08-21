@@ -6,7 +6,7 @@
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
 <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-<title>Historique — Vendora.ai</title>
+<title>Tarifs — Vendora.ai</title>
 <meta name="robots" content="noindex" />
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -35,10 +35,8 @@
   .logo .ai{color:var(--faint);font-weight:600}
   .nav-links{display:flex;align-items:center;gap:24px}
   .nav-links a{color:var(--muted);font-weight:500;font-size:14.5px;transition:color .15s}
-  .nav-links a:hover{color:var(--text)}
-  .nav-end{display:flex;align-items:center;gap:16px}
-  .nav-logout{color:var(--muted);font-weight:500;font-size:14px}
-  .nav-logout:hover{color:var(--text)}
+  .nav-links a:hover,.nav-links a.active{color:var(--text)}
+  .nav-end{display:flex;align-items:center;gap:14px}
   .burger{position:relative;display:none;flex-direction:column;align-items:center;justify-content:center;gap:5px;width:34px;height:34px;border:none;background:none;cursor:pointer;border-radius:9px;transition:background .15s}
   .burger:hover{background:var(--panel)}
   .burger span{display:block;width:20px;height:2px;background:var(--text);border-radius:2px;transition:transform .25s ease,opacity .18s ease}
@@ -49,88 +47,17 @@
   .nav.open .mob-menu{opacity:1;visibility:visible;transform:translateY(0);pointer-events:auto}
   .mob-menu a{display:block;width:100%;text-align:center;padding:13px 12px;border-radius:10px;font-size:15px;color:var(--text);font-weight:500}
   .mob-menu a:hover{background:var(--panel)}
-  .mob-user{width:100%;border:1px solid var(--text);border-radius:10px;padding:12px;text-align:center;font-weight:600;font-size:14.5px;color:var(--text);word-break:break-word;margin-bottom:2px}
-  .mob-cr-line{font-size:14px;font-weight:600;color:var(--text);padding:8px 8px 4px}
-  .mob-cr-line b{color:var(--brand)}
   /* mobile : onglets cachés, hamburger visible */
-  @media(max-width:760px){ .nav-links,.nav-logout{display:none!important} .burger{display:flex} }
-  .back{display:flex;align-items:center;gap:7px;color:var(--muted);font-weight:500;font-size:14px}
-  .back:hover{color:var(--text)}
-  .back svg{width:16px;height:16px}
+  @media(max-width:760px){ .nav-links{display:none!important} .burger{display:flex} .nav-end .credits{display:none} }
   .credits{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:500;color:var(--muted);background:var(--surface);border:1px solid var(--border);border-radius:999px;padding:7px 13px}
   .credits svg{width:15px;height:15px;color:var(--brand)}
   .credits b{color:var(--text);font-weight:700}
 
-  .account{position:relative}
-  .acct-btn{display:flex;align-items:center;gap:9px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:5px 11px 5px 6px;cursor:pointer;font-family:var(--font);transition:border-color .15s}
-  .acct-btn:hover{border-color:var(--faint)}
-  .avatar{width:30px;height:30px;border-radius:8px;background:var(--text);color:#fff;display:grid;place-items:center;font-weight:700;font-size:13px;flex-shrink:0}
-  .avatar.sm{width:34px;height:34px;font-size:14px;border-radius:9px}
-  .acct-info{display:flex;flex-direction:column;align-items:flex-start;line-height:1.15}
-  .acct-name{font-weight:600;font-size:13.5px;color:var(--text)}
-  .acct-cr{font-size:11.5px;color:var(--muted)}
-  .acct-cr{font-size:13.5px;font-weight:600;color:var(--text)}
-  .acct-cr b{color:var(--text);font-weight:700}
-  .acct-chev{width:15px;height:15px;color:var(--faint);transition:transform .15s}
-  .account.open .acct-chev{transform:rotate(180deg)}
-  .acct-menu{position:absolute;top:calc(100% + 10px);right:0;min-width:230px;background:var(--surface);border:1px solid var(--border);border-radius:14px;box-shadow:0 16px 40px -16px rgba(14,15,19,.3);padding:6px;opacity:0;visibility:hidden;transform:translateY(-6px);transition:.16s}
-  .account.open .acct-menu{opacity:1;visibility:visible;transform:translateY(0)}
-  .acct-head{display:flex;align-items:center;gap:10px;padding:10px 12px 12px;border-bottom:1px solid var(--hair);margin-bottom:6px}
-  .acct-head b{display:block;font-size:14px;font-weight:600}
-  .acct-head span{color:var(--muted);font-size:12.5px}
-  .acct-menu a{display:block;padding:10px 12px;border-radius:9px;font-size:14px;color:var(--text);font-weight:500}
-  .acct-menu a:hover{background:var(--panel)}
-  @media(max-width:600px){.acct-name{display:none}}
-
-  .btn{font-family:var(--font);font-weight:600;font-size:14.5px;cursor:pointer;border:none;border-radius:8px;padding:11px 18px;transition:background .15s,border-color .15s}
+  .btn{font-family:var(--font);font-weight:600;font-size:14.5px;cursor:pointer;border:none;border-radius:8px;padding:11px 18px;transition:background .15s,border-color .15s,opacity .15s}
   .btn-primary{background:var(--text);color:#fff}
   .btn-primary:hover{background:#25262c}
   .btn-line{background:#fff;color:var(--text);border:1px solid var(--border)}
   .btn-line:hover{border-color:var(--faint)}
-
-  main{min-height:calc(100vh - 51px);display:flex;flex-direction:column;justify-content:center;padding:40px 0}
-  .head{text-align:center;max-width:560px;margin:0 auto 30px}
-  .head h1{font-weight:700;font-size:clamp(26px,3.6vw,36px);letter-spacing:-.03em;margin-bottom:8px}
-  .head h1 .k{color:var(--brand)}
-  .head p{color:var(--muted);font-size:15.5px}
-
-  /* éditeur */
-  .tool{max-width:540px;margin:0 auto}
-  /* zone d'import (glisser-déposer) */
-  .drop{position:relative;display:block;width:100%;min-height:300px;border:2px dashed var(--border-2);border-radius:20px;background:#fff;cursor:pointer;overflow:hidden;transition:border-color .15s,background .15s}
-  .drop:hover,.drop.drag{border-color:var(--text);background:var(--panel)}
-  .drop-hint{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;text-align:center;padding:24px;pointer-events:none}
-  .drop-ic{width:58px;height:58px;border-radius:16px;background:var(--text);display:grid;place-items:center;margin-bottom:8px}
-  .drop-ic svg{width:26px;height:26px;color:#fff}
-  .drop-hint b{font-size:16.5px;font-weight:600}
-  .drop-sub{color:var(--muted);font-size:13.5px}
-  .preview{display:none}
-  .preview.show{display:block}
-  .preview img{width:100%;display:block;max-height:62vh;object-fit:contain;background:var(--panel)}
-  .drop:has(.preview.show){min-height:0;border-style:solid;border-color:var(--border);background:#fff}
-  .drop:has(.preview.show) .drop-hint{display:none}
-  .drop:has(.preview.show)::after{content:"Changer de photo";position:absolute;left:0;right:0;bottom:0;padding:26px 10px 12px;background:linear-gradient(transparent,rgba(14,15,19,.55));color:#fff;font-size:13px;font-weight:600;text-align:center;opacity:0;transition:opacity .15s;pointer-events:none}
-  .drop:has(.preview.show):hover::after{opacity:1}
-
-  /* choix des fonds : vignettes avec aperçu */
-  .bgpick{margin-top:22px}
-  .bgpick-label{font-size:11.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);display:block;margin-bottom:12px}
-  .bgs{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-  .bg{display:flex;flex-direction:column;gap:7px;padding:7px;background:#fff;border:1.5px solid var(--border);border-radius:14px;cursor:pointer;font-family:var(--font);transition:border-color .15s,transform .12s}
-  .bg:hover{border-color:var(--faint);transform:translateY(-1px)}
-  .bg.active{border-color:var(--text)}
-  .bg-thumb{width:100%;height:64px;border-radius:9px;background-size:cover;background-position:center;border:1px solid var(--border-2)}
-  .bg-name{font-size:12.5px;font-weight:600;color:var(--muted)}
-  .bg.active .bg-name{color:var(--text)}
-  @media(max-width:520px){ .bgs{grid-template-columns:1fr 1fr} .bg-thumb{height:74px} }
-
-  .go{width:100%;margin-top:22px;padding:16px;font-size:15.5px;font-weight:600;font-family:var(--font);cursor:pointer;border:none;border-radius:14px;background:var(--text);color:#fff;transition:background .15s,transform .1s;box-shadow:0 12px 26px -12px rgba(14,15,19,.55)}
-  .go:hover{background:#25262c}
-  .go:active{transform:translateY(1px)}
-  .go:disabled{background:var(--panel);color:var(--faint);border:1px solid var(--border);box-shadow:none;cursor:not-allowed}
-  .go:disabled:hover{background:var(--panel)}
-  .hint{display:flex;align-items:center;justify-content:center;gap:6px;text-align:center;color:var(--faint);font-size:12.5px;margin-top:12px}
-  .hint svg{width:14px;height:14px;color:var(--brand)}
 
   /* modale Paramètres */
   .modal-overlay{position:fixed;inset:0;z-index:60;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(18,19,24,.28);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
@@ -144,13 +71,41 @@
   .set-mail{font-size:13.5px;color:var(--muted);text-align:center;margin-bottom:14px;word-break:break-word}
   .btn-logout{width:100%;padding:13px;border:1px solid var(--border);background:#fff;color:#e5484d;font-family:var(--font);font-weight:600;font-size:14.5px;border-radius:10px;cursor:pointer;transition:.15s}
   .btn-logout:hover{background:#fff5f5;border-color:#f3c2c4}
-  .soon-emoji{font-size:40px;margin:6px 0 10px}
-  .soon-text{font-size:15px;font-weight:600;color:var(--text)}
-  /* page Shop indisponible — style accueil */
-  .soon-page{text-align:center;max-width:640px}
-  .soon-eyebrow{font-size:13px;font-weight:600;color:var(--muted);letter-spacing:.02em;margin-bottom:22px}
-  .soon-h1{font-weight:700;letter-spacing:-.035em;line-height:1.06;font-size:clamp(38px,6vw,64px);margin-bottom:22px}
-  .soon-sub{color:var(--muted);font-weight:400;font-size:clamp(16px,1.7vw,18px)}
+
+  /* --- contenu tarifs --- */
+  main{min-height:calc(100vh - 57px);padding:52px 0 84px}
+  .sec-head{max-width:560px;margin:0 auto 30px;text-align:center}
+  .sec-head h2{font-weight:700;font-size:clamp(24px,3vw,32px);letter-spacing:-.03em;margin-bottom:10px}
+  .sec-head p{color:var(--muted);font-size:15.5px}
+  .billing-toggle{display:flex;width:-moz-fit-content;width:fit-content;margin:0 auto 32px;padding:4px;background:var(--panel);border:1px solid var(--border);border-radius:999px;gap:2px}
+  .bt-opt{font-family:var(--font);font-weight:600;font-size:14px;color:var(--muted);background:none;border:none;cursor:pointer;padding:9px 22px;border-radius:999px;transition:background .15s,color .15s}
+  .bt-opt.active{background:var(--text);color:#fff}
+  .bt-badge{font-size:10.5px;font-weight:700;padding:2px 6px;border-radius:999px;margin-left:7px;background:rgba(47,107,255,.12);color:var(--brand)}
+  .bt-opt.active .bt-badge{background:rgba(255,255,255,.22);color:#fff}
+  .plans{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;max-width:900px;margin:0 auto;align-items:stretch}
+  .plan{border:1px solid var(--border);border-radius:14px;padding:30px;background:#fff;display:flex;flex-direction:column;position:relative}
+  .plan.pro{border-color:var(--text)}
+  .plan .ptop{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+  .plan h3{font-weight:600;font-size:16px}
+  .plan .tag{font-size:11px;font-weight:600;color:var(--brand);border:1px solid #cfe0ff;background:#f2f6ff;padding:3px 9px;border-radius:999px}
+  .plan .price{font-weight:700;font-size:38px;letter-spacing:-.03em;margin:10px 0 2px}
+  .plan .price small{font-size:14px;font-weight:500;color:var(--faint)}
+  .plan ul{list-style:none;margin:20px 0 24px;display:flex;flex-direction:column;gap:12px;flex:1}
+  .plan li{display:flex;gap:10px;align-items:flex-start;font-size:14px;color:var(--muted)}
+  .plan li svg{width:17px;height:17px;color:var(--text);flex-shrink:0;margin-top:2px}
+  .plan .btn{width:100%;text-align:center}
+  .plan-incl{font-size:11.5px;color:var(--faint);font-weight:700;margin-top:8px;text-transform:uppercase;letter-spacing:.05em}
+  .billed-year{display:none;font-size:12.5px;color:var(--muted);margin-top:4px}
+  .plans.yearly .billed-year{display:block}
+  @media(max-width:760px){.plans{grid-template-columns:1fr;max-width:400px}}
+  .recharges{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:720px;margin:0 auto}
+  .recharge-card{background:#fff;border:1px solid var(--border);border-radius:16px;padding:26px 24px;text-align:center;display:flex;flex-direction:column;align-items:center;box-shadow:0 1px 2px rgba(14,15,19,.04),0 18px 40px -30px rgba(14,15,19,.3)}
+  .recharge-card .rc-credits{font-weight:700;font-size:21px;letter-spacing:-.02em}
+  .recharge-card .rc-sub{color:var(--muted);font-size:13.5px;margin:6px 0 18px}
+  .recharge-card .btn{width:100%;padding:12px}
+  .recharge-card.pop{border-color:var(--text)}
+  .recharge-card .tag{font-size:11px;font-weight:600;color:var(--brand);border:1px solid #cfe0ff;background:#f2f6ff;padding:3px 9px;border-radius:999px;margin-bottom:12px}
+  @media(max-width:640px){.recharges{grid-template-columns:1fr;max-width:400px}}
 </style>
 </head>
 <body>
@@ -167,20 +122,21 @@
         <a href="app.html">Génération</a>
         <a href="historique.html">Historique</a>
         <a href="#" data-nav="parametres">Paramètres</a>
-        <a href="tarifs.html">Tarifs</a>
+        <a href="tarifs.html" class="active">Tarifs</a>
         <a href="shop.html">Shop</a>
       </nav>
       <div class="nav-end">
+        <div class="credits"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8.2" stroke="currentColor" stroke-width="1.8"/><path d="M12 7.5v9M9.6 10.2h3.1a1.65 1.65 0 010 3.3H9.9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><b id="creditCount">…</b> crédits</div>
         <button class="burger" id="burgerBtn" aria-label="Menu" aria-expanded="false">
           <span></span><span></span><span></span>
         </button>
       </div>
     </div>
     <div class="mob-menu" id="mobMenu">
-      <a href="app.html" data-nav="generation">Génération</a>
+      <a href="app.html">Génération</a>
       <a href="historique.html">Historique</a>
       <a href="#" data-nav="parametres">Paramètres</a>
-      <a href="tarifs.html">Tarifs</a>
+      <a href="tarifs.html" class="active">Tarifs</a>
       <a href="shop.html">Shop</a>
     </div>
   </div>
@@ -196,21 +152,60 @@
   </div>
 </div>
 
-<div class="modal-overlay" id="soonModal">
-  <div class="modal">
-    <div class="modal-head"><h3>Shop</h3><button class="modal-close" id="soonClose" aria-label="Fermer">✕</button></div>
-    <div class="modal-body" style="text-align:center">
-      <div class="soon-emoji">🛍️</div>
-      <p class="soon-text">Bientôt disponible</p>
-    </div>
-  </div>
-</div>
-
 <main>
-  <div class="wrap soon-page">
-    <p class="soon-eyebrow">Tes créations</p>
-    <h1 class="soon-h1">Bientôt disponible<span style="color:var(--brand)">.</span></h1>
-    <p class="soon-sub">Toutes tes photos améliorées seront bientôt réunies ici 📸</p>
+  <div class="wrap">
+    <div class="sec-head"><h2>Tarifs</h2><p>Choisis le forfait adapté à ton volume de ventes.</p></div>
+    <div class="billing-toggle">
+      <button class="bt-opt active" data-period="month">Mensuel</button>
+      <button class="bt-opt" data-period="year">Annuel <span class="bt-badge">-20%</span></button>
+    </div>
+    <div class="plans">
+      <div class="plan">
+        <div class="ptop"><h3>Découverte</h3></div>
+        <div class="price"><span class="price-amount" data-m="9,90€" data-y="7,90€">9,90€</span><small> /mois</small></div>
+        <div class="billed-year">Facturé 94,80 € /an</div>
+        <div class="plan-incl">Votre forfait inclut :</div>
+        <ul>
+          <li><svg viewBox="0 0 24 24" fill="none"><path d="M20 6 9 17l-5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> 2 000 crédits / mois</li>
+        </ul>
+        <button class="btn btn-line js-plan" data-plan="discovery">Choisir</button>
+      </div>
+      <div class="plan pro">
+        <div class="ptop"><h3>Essentiel</h3><span class="tag">Populaire</span></div>
+        <div class="price"><span class="price-amount" data-m="19,90€" data-y="16,90€">19,90€</span><small> /mois</small></div>
+        <div class="billed-year">Facturé 202,80 € /an</div>
+        <div class="plan-incl">Votre forfait inclut :</div>
+        <ul>
+          <li><svg viewBox="0 0 24 24" fill="none"><path d="M20 6 9 17l-5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> 5 000 crédits / mois</li>
+        </ul>
+        <button class="btn btn-primary js-plan" data-plan="essential">Choisir</button>
+      </div>
+      <div class="plan">
+        <div class="ptop"><h3>Ultimate</h3></div>
+        <div class="price"><span class="price-amount" data-m="39,90€" data-y="33,90€">39,90€</span><small> /mois</small></div>
+        <div class="billed-year">Facturé 406,80 € /an</div>
+        <div class="plan-incl">Votre forfait inclut :</div>
+        <ul>
+          <li><svg viewBox="0 0 24 24" fill="none"><path d="M20 6 9 17l-5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> Crédits illimités / mois</li>
+        </ul>
+        <button class="btn btn-line js-plan" data-plan="ultimate">Choisir</button>
+      </div>
+    </div>
+
+    <div class="sec-head" style="margin-top:64px"><h2>Recharge de crédits</h2><p>Achète des crédits sans abonnement. Paiement unique.</p></div>
+    <div class="recharges">
+      <div class="recharge-card pop">
+        <span class="tag">Populaire</span>
+        <div class="rc-credits">800 crédits</div>
+        <div class="rc-sub">Paiement unique · 9,90 €</div>
+        <button class="btn btn-primary js-topup" data-topup="topup_800">Débloquer — 9,90 €</button>
+      </div>
+      <div class="recharge-card">
+        <div class="rc-credits">2 000 crédits</div>
+        <div class="rc-sub">Paiement unique · 19,90 €</div>
+        <button class="btn btn-line js-topup" data-topup="topup_2000">Débloquer — 19,90 €</button>
+      </div>
+    </div>
   </div>
 </main>
 
@@ -220,18 +215,14 @@
   const SUPABASE_ANON_KEY = "sb_publishable_ujJAZvyLdjDzFSWbwBguWw_f0yIMJvs";
   const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  const COST = 100; // crédits par génération
-  const BACKEND = ""; // même origine : /api est servi par ce projet // backend Next (Vercel) — CORS + auth + crédits serveur
   let USER = null, TOKEN = null, credits = null, plan = null;
 
   function creditsLabel(){ if(plan==="ultimate") return "∞"; if(credits===null) return "…"; try{return credits.toLocaleString("fr-FR");}catch(e){return String(credits);} }
   function paintCredits(){ const el=document.getElementById("creditCount"); if(el) el.textContent = creditsLabel(); }
-
   function fillUser(u){
     USER = u;
     const name = (u.user_metadata && (u.user_metadata.name || u.user_metadata.full_name)) || (u.email ? u.email.split("@")[0] : "Mon compte");
-    const setT=(id,v)=>{const el=document.getElementById(id); if(el) el.textContent=v;};
-    setT("setMail", u.email||name);
+    const el=document.getElementById("setMail"); if(el) el.textContent = u.email||name;
     localStorage.setItem("vendora_user", JSON.stringify({id:u.id,name:name,email:u.email||""}));
     loadCredits();
   }
@@ -268,16 +259,49 @@
     modal.addEventListener("click",e=>{ if(e.target===modal) close(); });
   })();
 
-  // onglet Shop -> "bientôt disponible"
+  // toggle mensuel / annuel
   (function(){
-    const modal=document.getElementById("soonModal");
-    if(!modal) return;
-    const close=()=>modal.classList.remove("show");
-    document.querySelectorAll('[data-nav="shop"]').forEach(a=>a.addEventListener("click",e=>{e.preventDefault();modal.classList.add("show");}));
-    document.getElementById("soonClose").addEventListener("click",close);
-    modal.addEventListener("click",e=>{ if(e.target===modal) close(); });
+    const toggle=document.querySelector(".billing-toggle"), plans=document.querySelector(".plans");
+    if(!toggle||!plans) return;
+    toggle.addEventListener("click",e=>{
+      const b=e.target.closest(".bt-opt"); if(!b) return;
+      toggle.querySelectorAll(".bt-opt").forEach(x=>x.classList.toggle("active",x===b));
+      const year=b.dataset.period==="year";
+      plans.classList.toggle("yearly",year);
+      plans.querySelectorAll(".price-amount").forEach(el=>{el.textContent=year?el.dataset.y:el.dataset.m;});
+    });
   })();
 
+  // paiement Stripe -> /api/checkout
+  (function(){
+    const plans=document.querySelector(".plans");
+    const period=()=> plans && plans.classList.contains("yearly") ? "annual":"monthly";
+    async function checkout(productKey, btn){
+      const { data:{ session } } = await sb.auth.getSession();
+      if(!session){ location.href="auth.html"; return; }
+      const label=btn.textContent; btn.disabled=true; btn.style.opacity=".65"; btn.textContent="Redirection…";
+      try{
+        const r=await fetch("/api/checkout",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+session.access_token},body:JSON.stringify({productKey,returnTo:location.pathname})});
+        const j=await r.json().catch(()=>({}));
+        if(!r.ok||!j.url) throw new Error(j.error||("Erreur "+r.status));
+        location.href=j.url;
+      }catch(err){ btn.disabled=false; btn.style.opacity=""; btn.textContent=label; alert("Paiement indisponible : "+err.message); }
+    }
+    document.querySelectorAll(".js-plan").forEach(b=>b.addEventListener("click",()=>checkout(b.dataset.plan+"_"+period(),b)));
+    document.querySelectorAll(".js-topup").forEach(b=>b.addEventListener("click",()=>checkout(b.dataset.topup,b)));
+
+    // retour depuis Stripe
+    const back=new URLSearchParams(location.search).get("checkout");
+    if(back){
+      const ok=back==="success";
+      const t=document.createElement("div");
+      t.textContent=ok?"✅ Paiement réussi — tes crédits ont été ajoutés.":"Paiement annulé.";
+      t.style.cssText="position:fixed;left:50%;top:20px;transform:translateX(-50%);z-index:200;background:"+(ok?"#0e0f13":"#6b6d78")+";color:#fff;padding:12px 22px;border-radius:12px;font-weight:600;font-size:14px;box-shadow:0 14px 34px -12px rgba(0,0,0,.45)";
+      document.body.appendChild(t); setTimeout(()=>t.remove(),5000);
+      history.replaceState(null,"",location.pathname);
+      if(ok) setTimeout(loadCredits,1500);
+    }
+  })();
 </script>
 <!-- Vercel Web Analytics -->
 <script>window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments);};</script>
