@@ -156,6 +156,23 @@
   .soon-eyebrow{font-size:13px;font-weight:600;color:var(--muted);letter-spacing:.02em;margin-bottom:22px}
   .soon-h1{font-weight:700;letter-spacing:-.035em;line-height:1.06;font-size:clamp(38px,6vw,64px);margin-bottom:22px}
   .soon-sub{color:var(--muted);font-weight:400;font-size:clamp(16px,1.7vw,18px)}
+  /* --- facturation --- */
+  main{min-height:calc(100vh - 57px);padding:48px 0 84px}
+  .bill{max-width:620px;margin:0 auto}
+  .bill-title{font-weight:700;font-size:clamp(24px,3vw,30px);letter-spacing:-.03em;margin-bottom:24px}
+  .card{background:#fff;border:1px solid var(--border);border-radius:16px;padding:6px;margin-bottom:16px;box-shadow:0 1px 2px rgba(14,15,19,.04)}
+  .card-h{font-size:11.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);padding:14px 14px 8px}
+  .plan-row{display:flex;align-items:center;justify-content:space-between;padding:4px 14px 16px;gap:12px}
+  .plan-name{font-size:16px;font-weight:700}
+  .plan-sub{color:var(--muted);font-size:13px}
+  .btn-manage{background:#fff;border:1px solid var(--border);color:var(--text);font-family:var(--font);font-weight:600;font-size:13.5px;padding:9px 14px;border-radius:10px;cursor:pointer;transition:.15s;white-space:nowrap}
+  .btn-manage:hover{border-color:var(--faint);background:var(--panel)}
+  .pay-row{display:flex;align-items:center;justify-content:space-between;padding:14px}
+  .pay-row+.pay-row{border-top:1px solid var(--hair)}
+  .pay-l b{display:block;font-size:14.5px;font-weight:600}
+  .pay-l span{color:var(--muted);font-size:13px}
+  .pay-amt{font-weight:700;font-size:15px}
+  .bill-state{text-align:center;color:var(--muted);padding:22px 14px;font-size:14px}
 </style>
 </head>
 <body>
@@ -203,10 +220,26 @@
 </div>
 
 <main>
-  <div class="wrap soon-page">
-    <p class="soon-eyebrow">Abonnement & crédits</p>
-    <h1 class="soon-h1">Bientôt disponible<span style="color:var(--brand)">.</span></h1>
-    <p class="soon-sub">La gestion de ton abonnement et de tes crédits arrive très vite 💳</p>
+  <div class="wrap bill">
+    <h1 class="bill-title">Facturation</h1>
+
+    <div class="card">
+      <div class="card-h">Forfait actuel</div>
+      <div class="plan-row">
+        <div>
+          <div class="plan-name" id="planName">—</div>
+          <div class="plan-sub" id="planSub"></div>
+        </div>
+        <button class="btn-manage" id="manageBtn" type="button" style="display:none">Gérer / résilier</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-h">Prélèvements</div>
+      <div id="payLoading" class="bill-state">Chargement…</div>
+      <div id="payEmpty" class="bill-state" style="display:none">Aucun prélèvement pour le moment.</div>
+      <div id="payList"></div>
+    </div>
   </div>
 </main>
 
@@ -236,12 +269,69 @@
     const { data } = await sb.from("profiles").select("credits, plan").eq("id", USER.id).maybeSingle();
     if(data){ credits = data.credits; plan = data.plan; }
     paintCredits();
+    updatePlan();
   }
   sb.auth.getSession().then(({data})=>{
     if(!data.session){ window.location.href="auth.html"; return; }
     TOKEN = data.session.access_token;
     fillUser(data.session.user);
+    loadInvoices();
   });
+
+  const PLAN_NAMES = { discovery:"Découverte", essential:"Essentiel", ultimate:"Ultimate" };
+  function isPro(){ return !!(plan && PLAN_NAMES[plan]); }
+
+  function updatePlan(){
+    const nameEl=document.getElementById("planName");
+    const subEl=document.getElementById("planSub");
+    const btn=document.getElementById("manageBtn");
+    if(isPro()){
+      nameEl.textContent = PLAN_NAMES[plan];
+      subEl.textContent = "Abonnement actif";
+      btn.style.display="inline-block";
+    }else{
+      nameEl.textContent = "Aucun abonnement";
+      subEl.textContent = "Tu peux souscrire un forfait depuis Tarifs.";
+      btn.style.display="none";
+    }
+  }
+
+  // Ouvre le portail Stripe (gérer / résilier).
+  document.getElementById("manageBtn").addEventListener("click",async ()=>{
+    const b=document.getElementById("manageBtn"); const t=b.textContent; b.disabled=true; b.textContent="…";
+    try{
+      const r=await fetch(BACKEND+"/api/portal",{ method:"POST", headers:{ "Authorization":"Bearer "+TOKEN } });
+      const j=await r.json().catch(()=>({}));
+      if(!r.ok||!j.url) throw new Error(j.error||"Indisponible");
+      location.href=j.url;
+    }catch(err){ b.disabled=false; b.textContent=t; alert("Gestion indisponible : "+err.message); }
+  });
+
+  // Liste des prélèvements.
+  async function loadInvoices(){
+    const loading=document.getElementById("payLoading");
+    const empty=document.getElementById("payEmpty");
+    const list=document.getElementById("payList");
+    try{
+      const r=await fetch(BACKEND+"/api/invoices",{ headers:{ "Authorization":"Bearer "+TOKEN } });
+      const j=await r.json().catch(()=>({}));
+      loading.style.display="none";
+      const items=(j&&j.items)||[];
+      if(!items.length){ empty.style.display="block"; return; }
+      list.innerHTML=items.map(it=>{
+        const d=it.createdAt?new Date(it.createdAt):null;
+        const ds=d?d.toLocaleDateString("fr-FR",{day:"2-digit",month:"long",year:"numeric"}):"";
+        let amt="";
+        try{ amt=(Number(it.amount||0)/100).toLocaleString("fr-FR",{style:"currency",currency:(it.currency||"eur").toUpperCase()}); }
+        catch(e){ amt=((it.amount||0)/100).toFixed(2)+" €"; }
+        const label=it.label||(it.kind==="subscription"?"Abonnement":"Recharge de crédits");
+        const detail = it.credits ? (it.credits.toLocaleString("fr-FR")+" crédits") : "";
+        return '<div class="pay-row"><div class="pay-l"><b>'+label+'</b><span>'+ds+(detail?' · '+detail:'')+'</span></div><div class="pay-amt">'+amt+'</div></div>';
+      }).join("");
+    }catch(e){
+      loading.textContent="Impossible de charger les prélèvements.";
+    }
+  }
 
   // menu hamburger (barre attachée)
   (function(){

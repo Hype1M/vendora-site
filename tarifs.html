@@ -111,6 +111,9 @@
   .recharge-card.pop{border-color:var(--text)}
   .recharge-card .tag{font-size:11px;font-weight:600;color:var(--brand);border:1px solid #cfe0ff;background:#f2f6ff;padding:3px 9px;border-radius:999px;margin-bottom:12px}
   @media(max-width:640px){.recharges{grid-template-columns:1fr;max-width:400px}}
+  .cancel-line{text-align:center;margin-top:44px;font-size:13px;color:var(--faint)}
+  .cancel-line a{color:var(--muted);text-decoration:underline;text-underline-offset:2px}
+  .cancel-line a:hover{color:var(--text)}
 </style>
 </head>
 <body>
@@ -202,6 +205,8 @@
         <button class="btn btn-line js-topup" data-topup="topup_2000">Débloquer — 19,90 €</button>
       </div>
     </div>
+
+    <p class="cancel-line">Déjà abonné ? <a href="#" id="cancelSub">Résilier mon abonnement</a></p>
   </div>
 </main>
 
@@ -298,6 +303,20 @@
       if(ok) setTimeout(loadCredits,1500);
     }
   })();
+
+  // Résilier mon abonnement -> portail Stripe
+  document.getElementById("cancelSub").addEventListener("click",async e=>{
+    e.preventDefault();
+    const a=e.currentTarget; const t=a.textContent; a.textContent="Ouverture…";
+    try{
+      const { data:{ session } } = await sb.auth.getSession();
+      if(!session){ location.href="auth.html"; return; }
+      const r=await fetch("/api/portal",{ method:"POST", headers:{ "Authorization":"Bearer "+session.access_token } });
+      const j=await r.json().catch(()=>({}));
+      if(!r.ok||!j.url) throw new Error(j.error||"Aucun abonnement actif.");
+      location.href=j.url;
+    }catch(err){ a.textContent=t; alert(err.message); }
+  });
 </script>
 <!-- Vercel Web Analytics -->
 <script>window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments);};</script>

@@ -89,6 +89,26 @@ async function post(req: Request): Promise<Response> {
           .from("free_previews")
           .update({ locked: false })
           .eq("user_id", userId);
+
+        // Trace le prélèvement pour la page Facturation (best-effort).
+        await getSupabaseAdmin()
+          .from("payments")
+          .upsert(
+            {
+              id: session.id,
+              user_id: userId,
+              amount: session.amount_total ?? 0,
+              currency: session.currency ?? "eur",
+              kind,
+              plan,
+              credits,
+              label:
+                kind === "subscription"
+                  ? "Abonnement"
+                  : "Recharge de crédits",
+            },
+            { onConflict: "id" }
+          );
         break;
       }
 
@@ -110,6 +130,22 @@ async function post(req: Request): Promise<Response> {
             .from("profiles")
             .update({ credits, plan })
             .eq("id", userId);
+          // Trace le renouvellement dans la Facturation (best-effort).
+          await getSupabaseAdmin()
+            .from("payments")
+            .upsert(
+              {
+                id: invoice.id,
+                user_id: userId,
+                amount: (invoice as unknown as { amount_paid?: number }).amount_paid ?? 0,
+                currency: (invoice as unknown as { currency?: string }).currency ?? "eur",
+                kind: "subscription",
+                plan,
+                credits,
+                label: "Renouvellement",
+              },
+              { onConflict: "id" }
+            );
         }
         break;
       }
