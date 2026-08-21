@@ -156,6 +156,24 @@
   .soon-eyebrow{font-size:13px;font-weight:600;color:var(--muted);letter-spacing:.02em;margin-bottom:22px}
   .soon-h1{font-weight:700;letter-spacing:-.035em;line-height:1.06;font-size:clamp(38px,6vw,64px);margin-bottom:22px}
   .soon-sub{color:var(--muted);font-weight:400;font-size:clamp(16px,1.7vw,18px)}
+  /* --- historique --- */
+  main{min-height:calc(100vh - 57px);padding:48px 0 84px}
+  .hist{max-width:900px;margin:0 auto}
+  .hist-title{font-weight:700;font-size:clamp(24px,3vw,30px);letter-spacing:-.03em;margin-bottom:26px}
+  .hist-state{text-align:center;color:var(--muted);padding:64px 20px}
+  .empty-ic{font-size:46px;margin-bottom:14px}
+  .empty-t{font-size:17px;font-weight:600;color:var(--text);margin-bottom:6px}
+  .empty-s{font-size:14px;color:var(--muted);margin-bottom:22px}
+  .btn-cta{display:inline-block;background:var(--text);color:#fff;font-weight:600;font-size:14.5px;padding:12px 22px;border-radius:10px;transition:background .15s}
+  .btn-cta:hover{background:#25262c}
+  .hist-grid{display:none;grid-template-columns:repeat(3,1fr);gap:16px}
+  @media(max-width:760px){.hist-grid{grid-template-columns:1fr 1fr;gap:12px}}
+  @media(max-width:440px){.hist-grid{grid-template-columns:1fr}}
+  .hist-card{border:1px solid var(--border);border-radius:14px;overflow:hidden;background:#fff;box-shadow:0 1px 2px rgba(14,15,19,.04)}
+  .hist-card img{width:100%;display:block;aspect-ratio:4/5;object-fit:cover;background:var(--panel)}
+  .hist-meta{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;font-size:12.5px;color:var(--muted)}
+  .hist-meta .dl{color:var(--text);font-weight:600}
+  .hist-meta .dl:hover{color:var(--brand)}
 </style>
 </head>
 <body>
@@ -203,10 +221,16 @@
 </div>
 
 <main>
-  <div class="wrap soon-page">
-    <p class="soon-eyebrow">Tes créations</p>
-    <h1 class="soon-h1">Bientôt disponible<span style="color:var(--brand)">.</span></h1>
-    <p class="soon-sub">Toutes tes photos améliorées seront bientôt réunies ici 📸</p>
+  <div class="wrap hist">
+    <h1 class="hist-title">Historique</h1>
+    <div id="loading" class="hist-state">Chargement…</div>
+    <div id="empty" class="hist-state" style="display:none">
+      <div class="empty-ic">🖼️</div>
+      <p class="empty-t">Vos générations apparaîtront ici</p>
+      <p class="empty-s">Améliore une première photo pour la retrouver ici.</p>
+      <a class="btn-cta" href="app.html">Retoucher une photo</a>
+    </div>
+    <div id="grid" class="hist-grid"></div>
   </div>
 </main>
 
@@ -241,7 +265,34 @@
     if(!data.session){ window.location.href="auth.html"; return; }
     TOKEN = data.session.access_token;
     fillUser(data.session.user);
+    loadHistory();
   });
+
+  // charge et affiche l'historique des générations (images pleines, URLs signées)
+  async function loadHistory(){
+    const loading=document.getElementById("loading");
+    const empty=document.getElementById("empty");
+    const grid=document.getElementById("grid");
+    try{
+      const r=await fetch(BACKEND+"/api/generations",{ headers:{ "Authorization":"Bearer "+TOKEN } });
+      const j=await r.json().catch(()=>({}));
+      loading.style.display="none";
+      const items=(j&&j.items)||[];
+      if(!items.length){ empty.style.display="block"; return; }
+      grid.style.display="grid";
+      grid.innerHTML=items.map(it=>{
+        const d=it.createdAt?new Date(it.createdAt):null;
+        const ds=d?d.toLocaleDateString("fr-FR",{day:"2-digit",month:"short",year:"numeric"}):"";
+        const u=it.url||"";
+        return '<div class="hist-card">'
+          + '<a href="'+u+'" target="_blank" rel="noopener"><img src="'+u+'" alt="génération" loading="lazy"></a>'
+          + '<div class="hist-meta"><span>'+ds+'</span><a class="dl" href="'+u+'" target="_blank" rel="noopener">Télécharger</a></div>'
+          + '</div>';
+      }).join("");
+    }catch(e){
+      loading.textContent="Impossible de charger l'historique.";
+    }
+  }
 
   // menu hamburger (barre attachée)
   (function(){
