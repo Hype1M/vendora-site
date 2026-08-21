@@ -119,7 +119,7 @@
   .spinner{width:40px;height:40px;border-radius:50%;border:3px solid var(--border);border-top-color:var(--text);animation:vspin .8s linear infinite}
   @keyframes vspin{to{transform:rotate(360deg)}}
   /* overlay plein écran pendant la génération */
-  .page-gen{position:fixed;inset:0;z-index:100;display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px;text-align:center;padding:24px;background:rgba(244,245,247,.86);-webkit-backdrop-filter:blur(7px);backdrop-filter:blur(7px);animation:pgfade .2s ease}
+  .page-gen{position:fixed;inset:0;z-index:45;display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px;text-align:center;padding:24px;background:rgba(244,245,247,.86);-webkit-backdrop-filter:blur(7px);backdrop-filter:blur(7px);animation:pgfade .2s ease}
   .page-gen.show{display:flex}
   .page-gen .spinner{width:56px;height:56px;border-width:4px}
   .page-gen b{font-size:19px;font-weight:700;letter-spacing:-.02em}
@@ -261,7 +261,6 @@
 <div class="page-gen" id="pageGen">
   <div class="spinner"></div>
   <b>Amélioration en cours…</b>
-  <span>Ça peut prendre jusqu'à 3 min au 1er essai (le serveur se réveille). Reste sur la page.</span>
 </div>
 
 <script>
