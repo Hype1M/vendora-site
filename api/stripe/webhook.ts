@@ -71,10 +71,11 @@ async function post(req: Request): Promise<Response> {
         if (!userId || credits <= 0) break;
 
         if (kind === "subscription") {
+          // Abonnement : on AJOUTE les crédits au solde restant + on pose le plan.
+          await addCredits(userId, credits);
           await getSupabaseAdmin()
             .from("profiles")
             .update({
-              credits,
               plan,
               stripe_customer_id:
                 typeof session.customer === "string" ? session.customer : null,
@@ -150,10 +151,11 @@ async function post(req: Request): Promise<Response> {
         const credits = parseInt(sub.metadata?.credits || "0", 10);
         const plan = sub.metadata?.plan || null;
         if (userId && credits > 0) {
-          // Recharge le quota mensuel de crédits pour ce cycle.
+          // Ajoute les crédits mensuels au solde restant (cumul, pas de reset).
+          await addCredits(userId, credits);
           await getSupabaseAdmin()
             .from("profiles")
-            .update({ credits, plan })
+            .update({ plan })
             .eq("id", userId);
           // Trace le renouvellement dans la Facturation (best-effort).
           await getSupabaseAdmin()
