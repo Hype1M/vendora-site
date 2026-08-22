@@ -114,18 +114,43 @@ async function post(req: Request): Promise<Response> {
 
       // --- Renouvellement mensuel/annuel d'un abonnement ---
       case "invoice.paid": {
-        const invoice = event.data.object as Stripe.Invoice & {
-          subscription?: string;
+        const invoice = event.data.object as Stripe.Invoice;
+        // L'emplacement de l'id d'abonnement a changé selon la version de l'API
+        // Stripe : on le cherche à tous les endroits possibles pour rester robuste.
+        const inv = invoice as unknown as {
+          id?: string;
           billing_reason?: string;
+          subscription?: string;
+          amount_paid?: number;
+          currency?: string;
+          parent?: { subscription_details?: { subscription?: string } };
+          lines?: {
+            data?: Array<{
+              subscription?: string;
+              parent?: { subscription_item_details?: { subscription?: string } };
+            }>;
+          };
         };
-        if (invoice.billing_reason !== "subscription_cycle") break;
-        if (!invoice.subscription) break;
+        if (inv.billing_reason !== "subscription_cycle") break;
 
-        const sub = await getStripe().subscriptions.retrieve(invoice.subscription);
+        let subId: string | undefined =
+          inv.subscription || inv.parent?.subscription_details?.subscription;
+        if (!subId && inv.lines?.data) {
+          for (const l of inv.lines.data) {
+            subId =
+              l.subscription ||
+              l.parent?.subscription_item_details?.subscription;
+            if (subId) break;
+          }
+        }
+        if (!subId) break;
+
+        const sub = await getStripe().subscriptions.retrieve(subId);
         const userId = sub.metadata?.userId;
         const credits = parseInt(sub.metadata?.credits || "0", 10);
         const plan = sub.metadata?.plan || null;
         if (userId && credits > 0) {
+          // Recharge le quota mensuel de crédits pour ce cycle.
           await getSupabaseAdmin()
             .from("profiles")
             .update({ credits, plan })
@@ -135,10 +160,10 @@ async function post(req: Request): Promise<Response> {
             .from("payments")
             .upsert(
               {
-                id: invoice.id,
+                id: inv.id,
                 user_id: userId,
-                amount: (invoice as unknown as { amount_paid?: number }).amount_paid ?? 0,
-                currency: (invoice as unknown as { currency?: string }).currency ?? "eur",
+                amount: inv.amount_paid ?? 0,
+                currency: inv.currency ?? "eur",
                 kind: "subscription",
                 plan,
                 credits,
