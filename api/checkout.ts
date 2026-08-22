@@ -2,7 +2,7 @@ import { adapt } from "../lib/vercelAdapter";
 import Stripe from "stripe";
 import { getSupabaseAnon } from "../lib/supabaseAdmin";
 import { STRIPE_PRODUCTS, type ProductKey } from "../lib/stripeProducts";
-import { json, preflight, bearer } from "../lib/http";
+import { json, preflight, bearer, siteOrigin, safeReturnPath } from "../lib/http";
 
 let _stripe: Stripe | null = null;
 function getStripe(): Stripe {
@@ -16,12 +16,9 @@ async function post(req: Request): Promise<Response> {
     const product = STRIPE_PRODUCTS[productKey as ProductKey];
     if (!product) return json({ error: "Produit inconnu." }, 400);
 
-    // Page de retour après paiement (même origine). On n'accepte qu'un chemin
-    // simple pour éviter toute redirection ouverte.
-    const ret =
-      typeof returnTo === "string" && /^\/[a-zA-Z0-9_\-./]*$/.test(returnTo)
-        ? returnTo
-        : "/pricing.html";
+    // Page de retour après paiement (même origine). Chemin relatif validé
+    // (query autorisée, pas de "//" → anti open-redirect).
+    const ret = safeReturnPath(returnTo, "/pricing.html");
 
     // Identifier l'utilisateur via son access token Supabase.
     const token = bearer(req);
@@ -31,8 +28,8 @@ async function post(req: Request): Promise<Response> {
     } = await getSupabaseAnon().auth.getUser(token);
     if (error || !user) return json({ error: "Non connecté." }, 401);
 
-    const origin =
-      req.headers.get("origin") || `https://${req.headers.get("host")}`;
+    const origin = siteOrigin(req);
+    const sep = ret.includes("?") ? "&" : "?";
 
     const session = await getStripe().checkout.sessions.create({
       mode: product.mode,
@@ -56,8 +53,8 @@ async function post(req: Request): Promise<Response> {
             },
           }
         : {}),
-      success_url: `${origin}${ret}?checkout=success`,
-      cancel_url: `${origin}${ret}?checkout=cancel`,
+      success_url: `${origin}${ret}${sep}checkout=success`,
+      cancel_url: `${origin}${ret}${sep}checkout=cancel`,
     });
 
     return json({ url: session.url });

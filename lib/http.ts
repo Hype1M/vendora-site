@@ -47,3 +47,27 @@ export function preflight(): Response {
 export function bearer(req: Request): string {
   return (req.headers.get("authorization") || "").replace("Bearer ", "");
 }
+
+// Origine canonique du site. On n'utilise l'en-tête Host que s'il fait partie
+// d'une liste blanche (sinon on retombe sur l'apex) : évite l'injection d'en-tête
+// Host/Origin qui permettrait de détourner l'URL de retour après paiement.
+const ALLOWED_HOSTS = new Set([
+  "vendorastudio.app",
+  "www.vendorastudio.app",
+]);
+export function siteOrigin(req: Request): string {
+  const host = (req.headers.get("host") || "").toLowerCase();
+  return ALLOWED_HOSTS.has(host)
+    ? `https://${host}`
+    : "https://vendorastudio.app";
+}
+
+// Valide un chemin de retour relatif (avec query optionnelle) : doit commencer
+// par un seul "/" (pas "//" → anti open-redirect) et ne contenir que des
+// caractères sûrs. Retourne un chemin propre ou le repli fourni.
+export function safeReturnPath(value: unknown, fallback: string): string {
+  return typeof value === "string" &&
+    /^\/(?!\/)[A-Za-z0-9_\-./]*(\?[A-Za-z0-9_\-=&%.]*)?$/.test(value)
+    ? value
+    : fallback;
+}

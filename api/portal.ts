@@ -1,7 +1,7 @@
 import { adapt } from "../lib/vercelAdapter";
 import Stripe from "stripe";
 import { getSupabaseAdmin, getSupabaseAnon } from "../lib/supabaseAdmin";
-import { json, preflight, bearer } from "../lib/http";
+import { json, preflight, bearer, siteOrigin } from "../lib/http";
 
 let _stripe: Stripe | null = null;
 function getStripe(): Stripe {
@@ -29,12 +29,9 @@ async function post(req: Request): Promise<Response> {
     const customerId = profile?.stripe_customer_id;
     if (!customerId) return json({ error: "Aucun abonnement à gérer." }, 400);
 
-    const origin =
-      req.headers.get("origin") || `https://${req.headers.get("host")}`;
-
     const portal = await getStripe().billingPortal.sessions.create({
       customer: customerId,
-      return_url: `${origin}/`,
+      return_url: `${siteOrigin(req)}/`,
     });
 
     return json({ url: portal.url });
