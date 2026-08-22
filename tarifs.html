@@ -277,12 +277,15 @@
   (function(){
     const plans=document.querySelector(".plans");
     const period=()=> plans && plans.classList.contains("yearly") ? "annual":"monthly";
+    const fromUnlock = new URLSearchParams(location.search).get("unlock")==="1";
+    if(fromUnlock){ const p=document.querySelector(".sec-head p"); if(p) p.textContent="Choisis une offre pour débloquer ta photo en pleine qualité."; }
     async function checkout(productKey, btn){
       const { data:{ session } } = await sb.auth.getSession();
       if(!session){ location.href="auth.html"; return; }
       const label=btn.textContent; btn.disabled=true; btn.style.opacity=".65"; btn.textContent="Redirection…";
       try{
-        const r=await fetch("/api/checkout",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+session.access_token},body:JSON.stringify({productKey,returnTo:location.pathname})});
+        const returnTo = fromUnlock ? "/app.html?unlocked=1" : location.pathname;
+        const r=await fetch("/api/checkout",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+session.access_token},body:JSON.stringify({productKey,returnTo})});
         const j=await r.json().catch(()=>({}));
         if(!r.ok||!j.url) throw new Error(j.error||("Erreur "+r.status));
         location.href=j.url;

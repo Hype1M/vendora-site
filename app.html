@@ -137,21 +137,6 @@
   .lock-overlay{position:absolute;inset:0;display:none;align-items:center;justify-content:center;pointer-events:none}
   .lock-badge{width:60px;height:60px;border-radius:50%;background:rgba(255,255,255,.92);display:grid;place-items:center;box-shadow:0 10px 26px -10px rgba(0,0,0,.45)}
   .lock-badge svg{width:28px;height:28px;color:var(--text)}
-  /* popup abonnements */
-  .pw-sub{color:var(--muted);font-size:14px;text-align:center;margin-bottom:16px}
-  .pw-plans{display:flex;flex-direction:column;gap:10px}
-  .pw-plan{position:relative;display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid var(--border);border-radius:12px;padding:14px 16px;background:#fff;cursor:pointer;font-family:var(--font);text-align:left;transition:border-color .15s,transform .1s}
-  .pw-plan:hover{border-color:var(--text)}
-  .pw-plan.pro{border-color:var(--text)}
-  .pw-plan:active{transform:scale(.99)}
-  .pw-l{display:flex;flex-direction:column;gap:1px}
-  .pw-n{font-weight:700;font-size:15px;color:var(--text)}
-  .pw-c{color:var(--muted);font-size:12.5px}
-  .pw-p{font-weight:700;font-size:16px;color:var(--text);white-space:nowrap}
-  .pw-p small{font-size:11px;color:var(--faint);font-weight:500}
-  .pw-tag{position:absolute;top:-9px;left:14px;font-size:10px;font-weight:700;color:#fff;background:var(--text);padding:2px 8px;border-radius:999px}
-  .pw-all{display:block;text-align:center;margin-top:16px;color:var(--muted);font-size:13px;font-weight:600}
-  .pw-all:hover{color:var(--text)}
   .preview{display:none}
   .preview.show{display:block;position:absolute;inset:0}
   .preview img{width:100%;height:100%;display:block;object-fit:cover}
@@ -287,21 +272,6 @@
   <b>Amélioration en cours…</b>
 </div>
 
-<div class="modal-overlay" id="paywallModal">
-  <div class="modal">
-    <div class="modal-head"><h3>Débloque ton image</h3><button class="modal-close" id="paywallClose" aria-label="Fermer">✕</button></div>
-    <div class="modal-body">
-      <p class="pw-sub">Choisis un forfait pour obtenir ta photo en pleine qualité, sans flou.</p>
-      <div class="pw-plans">
-        <button class="pw-plan" data-plan="discovery" type="button"><span class="pw-l"><b class="pw-n">Découverte</b><span class="pw-c">2 000 crédits / mois</span></span><span class="pw-p">9,90€<small>/mois</small></span></button>
-        <button class="pw-plan pro" data-plan="essential" type="button"><span class="pw-tag">Populaire</span><span class="pw-l"><b class="pw-n">Essentiel</b><span class="pw-c">5 000 crédits / mois</span></span><span class="pw-p">19,90€<small>/mois</small></span></button>
-        <button class="pw-plan" data-plan="ultimate" type="button"><span class="pw-l"><b class="pw-n">Ultimate</b><span class="pw-c">Crédits illimités</span></span><span class="pw-p">39,90€<small>/mois</small></span></button>
-      </div>
-      <a class="pw-all" href="tarifs.html">Voir tous les tarifs &amp; recharges →</a>
-    </div>
-  </div>
-</div>
-
 <script>
   /* ---------- Supabase : session obligatoire ---------- */
   const SUPABASE_URL = "https://zipzllczqfcfvyydvmpy.supabase.co";
@@ -333,6 +303,7 @@
     if(!data.session){ window.location.href="auth.html"; return; }
     TOKEN = data.session.access_token;
     fillUser(data.session.user);
+    maybeShowUnlocked();
   });
 
   // menu hamburger (barre attachée)
@@ -406,30 +377,30 @@
   }
   document.getElementById("againBtn").addEventListener("click",()=>location.reload());
 
-  // Popup abonnements (paywall) — ouverture depuis "Débloquer l'image"
-  (function(){
-    const modal=document.getElementById("paywallModal");
-    const open=()=>modal.classList.add("show");
-    const close=()=>modal.classList.remove("show");
-    document.getElementById("unlockBtn").addEventListener("click",open);
-    document.getElementById("paywallClose").addEventListener("click",close);
-    modal.addEventListener("click",e=>{ if(e.target===modal) close(); });
-    // clic sur un forfait -> paiement Stripe
-    modal.querySelectorAll(".pw-plan").forEach(b=>b.addEventListener("click",async ()=>{
-      const t=b.querySelector(".pw-p").textContent;
-      b.disabled=true; b.style.opacity=".6";
-      try{
-        const r=await fetch(BACKEND+"/api/checkout",{
-          method:"POST",
-          headers:{ "Content-Type":"application/json", "Authorization":"Bearer "+TOKEN },
-          body: JSON.stringify({ productKey: b.dataset.plan+"_monthly", returnTo:"/app.html" })
-        });
-        const j=await r.json().catch(()=>({}));
-        if(!r.ok||!j.url) throw new Error(j.error||"Indisponible");
-        location.href=j.url;
-      }catch(err){ b.disabled=false; b.style.opacity=""; alert("Paiement indisponible : "+err.message); }
-    }));
-  })();
+  // "Débloquer l'image" -> page Tarifs complète (avec contexte de déblocage)
+  document.getElementById("unlockBtn").addEventListener("click",()=>{ location.href="tarifs.html?unlock=1"; });
+
+  // Retour de paiement (?unlocked=1) : on récupère l'image débloquée en pleine
+  // qualité. Le webhook Stripe peut mettre 1-2s à débloquer → on réessaie.
+  async function maybeShowUnlocked(){
+    if(new URLSearchParams(location.search).get("unlocked")!=="1") return;
+    history.replaceState(null,"",location.pathname);
+    const pageGen=document.getElementById("pageGen");
+    const b=pageGen.querySelector("b"); const orig=b.textContent;
+    b.textContent="Déblocage de ton image…"; pageGen.classList.add("show");
+    try{
+      for(let i=0;i<8;i++){
+        try{
+          const r=await fetch(BACKEND+"/api/preview",{ headers:{ "Authorization":"Bearer "+TOKEN } });
+          const j=await r.json().catch(()=>({}));
+          if(j && j.exists && j.locked===false && j.url){ showResult(j.url, false); return; }
+        }catch(e){}
+        await new Promise(res=>setTimeout(res,1500));
+      }
+    }finally{
+      b.textContent=orig; pageGen.classList.remove("show");
+    }
+  }
 
   go.addEventListener("click",async ()=>{
     if(!file.files||!file.files[0]||!bg){ return; }
