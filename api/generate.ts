@@ -175,8 +175,8 @@ async function post(req: Request): Promise<Response> {
       const sharp = (await import("sharp")).default;
       blurred = await sharp(buffer)
         .resize(720, null, { withoutEnlargement: true })
-        .blur(18)
-        .jpeg({ quality: 60 })
+        .blur(6)
+        .jpeg({ quality: 70 })
         .toBuffer();
     } catch (e: unknown) {
       // sharp indisponible → on annule la réservation d'aperçu et on remonte l'erreur.
@@ -195,6 +195,15 @@ async function post(req: Request): Promise<Response> {
         contentType: "image/jpeg",
         upsert: true,
       });
+
+    // On archive AUSSI l'aperçu (version floutée) dans l'historique.
+    try {
+      await admin
+        .from("generations")
+        .insert({ user_id: user.id, path: thumbPath, background });
+    } catch {
+      /* archivage best-effort */
+    }
 
     return binary(new Uint8Array(blurred), "image/jpeg", { "X-Locked": "1" });
   } catch (err: unknown) {

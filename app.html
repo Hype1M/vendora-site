@@ -132,14 +132,11 @@
   .result-actions .go{margin-top:0;flex:1}
   .go-line{background:#fff;color:var(--text);border:1px solid var(--border);box-shadow:none}
   .go-line:hover{background:var(--panel);border-color:var(--faint)}
-  /* aperçu verrouillé (gratuit flouté) */
+  /* aperçu verrouillé (gratuit flouté) : juste le cadenas */
   .result-img-wrap{position:relative;line-height:0;max-width:100%}
-  .lock-overlay{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center;padding:24px;border-radius:18px;background:rgba(14,15,19,.42);-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px);color:#fff;line-height:1.5}
-  .lock-overlay svg{width:34px;height:34px}
-  .lock-overlay b{font-size:18px;font-weight:700}
-  .lock-overlay span{font-size:13px;opacity:.92;max-width:250px}
-  .lock-overlay .go{width:auto;margin-top:10px;padding:13px 24px;background:#fff;color:var(--text);box-shadow:0 10px 24px -10px rgba(0,0,0,.5)}
-  .lock-overlay .go:hover{background:#f1f2f5}
+  .lock-overlay{position:absolute;inset:0;display:none;align-items:center;justify-content:center;pointer-events:none}
+  .lock-badge{width:60px;height:60px;border-radius:50%;background:rgba(255,255,255,.92);display:grid;place-items:center;box-shadow:0 10px 26px -10px rgba(0,0,0,.45)}
+  .lock-badge svg{width:28px;height:28px;color:var(--text)}
   /* popup abonnements */
   .pw-sub{color:var(--muted);font-size:14px;text-align:center;margin-bottom:16px}
   .pw-plans{display:flex;flex-direction:column;gap:10px}
@@ -273,13 +270,11 @@
       <div class="result-img-wrap">
         <img id="resultImg" alt="résultat retouché">
         <div class="lock-overlay" id="lockOverlay">
-          <svg viewBox="0 0 24 24" fill="none"><rect x="4.5" y="10.5" width="15" height="10" rx="2.2" stroke="currentColor" stroke-width="1.8"/><path d="M8 10.5V8a4 4 0 018 0v2.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-          <b>Image verrouillée</b>
-          <span>Débloque-la en pleine qualité, sans flou.</span>
-          <button class="go" id="unlockBtn" type="button">Débloquer l'image</button>
+          <div class="lock-badge"><svg viewBox="0 0 24 24" fill="none"><rect x="4.5" y="10.5" width="15" height="10" rx="2.2" stroke="currentColor" stroke-width="1.8"/><path d="M8 10.5V8a4 4 0 018 0v2.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div>
         </div>
       </div>
       <div class="result-actions">
+        <button class="go" id="unlockBtn" type="button" style="display:none">Débloquer l'image</button>
         <a class="go" id="dlBtn" download="vendora.png">Télécharger</a>
         <button class="go go-line" id="againBtn" type="button">Nouvelle photo</button>
       </div>
@@ -398,9 +393,15 @@
     document.getElementById("editor").style.display="none";
     document.getElementById("resultImg").src=url;
     const dl=document.getElementById("dlBtn");
+    const un=document.getElementById("unlockBtn");
+    const again=document.getElementById("againBtn");
     const lock=document.getElementById("lockOverlay");
-    if(locked){ lock.style.display="flex"; dl.style.display="none"; }
-    else { lock.style.display="none"; dl.style.display=""; dl.href=url; }
+    if(locked){
+      // aperçu flouté : cadenas + un seul bouton noir "Débloquer l'image"
+      lock.style.display="flex"; un.style.display=""; dl.style.display="none"; again.style.display="none";
+    }else{
+      lock.style.display="none"; un.style.display="none"; dl.style.display=""; dl.href=url; again.style.display="";
+    }
     document.getElementById("result").classList.add("show");
   }
   document.getElementById("againBtn").addEventListener("click",()=>location.reload());
