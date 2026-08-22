@@ -103,10 +103,9 @@
   .tool{max-width:540px;margin:0 auto}
   /* zone d'import (carte nette) */
   .drop{position:relative;display:block;width:100%;aspect-ratio:1;border:1px solid var(--border);border-radius:20px;background:#fff;cursor:pointer;overflow:hidden;box-shadow:0 1px 2px rgba(14,15,19,.04),0 18px 44px -30px rgba(14,15,19,.35);transition:border-color .15s,box-shadow .15s;-webkit-tap-highlight-color:transparent}
-  .drop:hover,.drop.drag{border-color:var(--text);box-shadow:0 1px 2px rgba(14,15,19,.04),0 22px 50px -30px rgba(14,15,19,.35)}
+  .drop.drag{background:var(--panel)}
   .drop-hint{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center;padding:24px;pointer-events:none}
   .drop-ic{width:62px;height:62px;border-radius:50%;background:rgba(47,107,255,.1);color:var(--brand);display:grid;place-items:center;margin-bottom:10px;transition:background .15s,color .15s}
-  .drop:hover .drop-ic,.drop.drag .drop-ic{background:rgba(14,15,19,.08);color:var(--text)}
   .drop-ic svg{width:26px;height:26px}
   .drop-hint b{font-size:17px;font-weight:600}
   .drop-sub{color:var(--muted);font-size:13.5px}
