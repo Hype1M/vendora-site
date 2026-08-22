@@ -182,9 +182,11 @@ async function post(req: Request): Promise<Response> {
         const sub = event.data.object as Stripe.Subscription;
         const userId = sub.metadata?.userId;
         if (userId) {
+          // On repasse le plan en "free" mais on CONSERVE les crédits restants
+          // (l'utilisateur peut finir de les dépenser ; il n'en reçoit plus de nouveaux).
           await getSupabaseAdmin()
             .from("profiles")
-            .update({ plan: "free", credits: 0 })
+            .update({ plan: "free" })
             .eq("id", userId);
         }
         break;
