@@ -175,8 +175,8 @@ async function post(req: Request): Promise<Response> {
       const sharp = (await import("sharp")).default;
       blurred = await sharp(buffer)
         .resize(720, null, { withoutEnlargement: true })
-        .blur(6)
-        .jpeg({ quality: 70 })
+        .blur(11)
+        .jpeg({ quality: 68 })
         .toBuffer();
     } catch (e: unknown) {
       // sharp indisponible → on annule la réservation d'aperçu et on remonte l'erreur.
