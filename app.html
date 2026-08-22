@@ -132,6 +132,29 @@
   .result-actions .go{margin-top:0;flex:1}
   .go-line{background:#fff;color:var(--text);border:1px solid var(--border);box-shadow:none}
   .go-line:hover{background:var(--panel);border-color:var(--faint)}
+  /* aperçu verrouillé (gratuit flouté) */
+  .result-img-wrap{position:relative;line-height:0;max-width:100%}
+  .lock-overlay{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center;padding:24px;border-radius:18px;background:rgba(14,15,19,.42);-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px);color:#fff;line-height:1.5}
+  .lock-overlay svg{width:34px;height:34px}
+  .lock-overlay b{font-size:18px;font-weight:700}
+  .lock-overlay span{font-size:13px;opacity:.92;max-width:250px}
+  .lock-overlay .go{width:auto;margin-top:10px;padding:13px 24px;background:#fff;color:var(--text);box-shadow:0 10px 24px -10px rgba(0,0,0,.5)}
+  .lock-overlay .go:hover{background:#f1f2f5}
+  /* popup abonnements */
+  .pw-sub{color:var(--muted);font-size:14px;text-align:center;margin-bottom:16px}
+  .pw-plans{display:flex;flex-direction:column;gap:10px}
+  .pw-plan{position:relative;display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid var(--border);border-radius:12px;padding:14px 16px;background:#fff;cursor:pointer;font-family:var(--font);text-align:left;transition:border-color .15s,transform .1s}
+  .pw-plan:hover{border-color:var(--text)}
+  .pw-plan.pro{border-color:var(--text)}
+  .pw-plan:active{transform:scale(.99)}
+  .pw-l{display:flex;flex-direction:column;gap:1px}
+  .pw-n{font-weight:700;font-size:15px;color:var(--text)}
+  .pw-c{color:var(--muted);font-size:12.5px}
+  .pw-p{font-weight:700;font-size:16px;color:var(--text);white-space:nowrap}
+  .pw-p small{font-size:11px;color:var(--faint);font-weight:500}
+  .pw-tag{position:absolute;top:-9px;left:14px;font-size:10px;font-weight:700;color:#fff;background:var(--text);padding:2px 8px;border-radius:999px}
+  .pw-all{display:block;text-align:center;margin-top:16px;color:var(--muted);font-size:13px;font-weight:600}
+  .pw-all:hover{color:var(--text)}
   .preview{display:none}
   .preview.show{display:block;position:absolute;inset:0}
   .preview img{width:100%;height:100%;display:block;object-fit:cover}
@@ -247,7 +270,15 @@
     </div>
 
     <div class="result" id="result">
-      <img id="resultImg" alt="résultat retouché">
+      <div class="result-img-wrap">
+        <img id="resultImg" alt="résultat retouché">
+        <div class="lock-overlay" id="lockOverlay">
+          <svg viewBox="0 0 24 24" fill="none"><rect x="4.5" y="10.5" width="15" height="10" rx="2.2" stroke="currentColor" stroke-width="1.8"/><path d="M8 10.5V8a4 4 0 018 0v2.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <b>Image verrouillée</b>
+          <span>Débloque-la en pleine qualité, sans flou.</span>
+          <button class="go" id="unlockBtn" type="button">Débloquer l'image</button>
+        </div>
+      </div>
       <div class="result-actions">
         <a class="go" id="dlBtn" download="vendora.png">Télécharger</a>
         <button class="go go-line" id="againBtn" type="button">Nouvelle photo</button>
@@ -259,6 +290,21 @@
 <div class="page-gen" id="pageGen">
   <div class="spinner"></div>
   <b>Amélioration en cours…</b>
+</div>
+
+<div class="modal-overlay" id="paywallModal">
+  <div class="modal">
+    <div class="modal-head"><h3>Débloque ton image</h3><button class="modal-close" id="paywallClose" aria-label="Fermer">✕</button></div>
+    <div class="modal-body">
+      <p class="pw-sub">Choisis un forfait pour obtenir ta photo en pleine qualité, sans flou.</p>
+      <div class="pw-plans">
+        <button class="pw-plan" data-plan="discovery" type="button"><span class="pw-l"><b class="pw-n">Découverte</b><span class="pw-c">2 000 crédits / mois</span></span><span class="pw-p">9,90€<small>/mois</small></span></button>
+        <button class="pw-plan pro" data-plan="essential" type="button"><span class="pw-tag">Populaire</span><span class="pw-l"><b class="pw-n">Essentiel</b><span class="pw-c">5 000 crédits / mois</span></span><span class="pw-p">19,90€<small>/mois</small></span></button>
+        <button class="pw-plan" data-plan="ultimate" type="button"><span class="pw-l"><b class="pw-n">Ultimate</b><span class="pw-c">Crédits illimités</span></span><span class="pw-p">39,90€<small>/mois</small></span></button>
+      </div>
+      <a class="pw-all" href="tarifs.html">Voir tous les tarifs &amp; recharges →</a>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -346,23 +392,49 @@
     });
   })();
   document.getElementById("resetBtn")?.addEventListener("click",()=>{ location.reload(); });
-  function showResult(url){
+  function showResult(url, locked){
     // on masque tout l'éditeur (import + fonds + bouton) et on affiche le
     // résultat dans son format de sortie naturel (pas de recadrage carré).
     document.getElementById("editor").style.display="none";
     document.getElementById("resultImg").src=url;
-    document.getElementById("dlBtn").href=url;
+    const dl=document.getElementById("dlBtn");
+    const lock=document.getElementById("lockOverlay");
+    if(locked){ lock.style.display="flex"; dl.style.display="none"; }
+    else { lock.style.display="none"; dl.style.display=""; dl.href=url; }
     document.getElementById("result").classList.add("show");
   }
   document.getElementById("againBtn").addEventListener("click",()=>location.reload());
 
+  // Popup abonnements (paywall) — ouverture depuis "Débloquer l'image"
+  (function(){
+    const modal=document.getElementById("paywallModal");
+    const open=()=>modal.classList.add("show");
+    const close=()=>modal.classList.remove("show");
+    document.getElementById("unlockBtn").addEventListener("click",open);
+    document.getElementById("paywallClose").addEventListener("click",close);
+    modal.addEventListener("click",e=>{ if(e.target===modal) close(); });
+    // clic sur un forfait -> paiement Stripe
+    modal.querySelectorAll(".pw-plan").forEach(b=>b.addEventListener("click",async ()=>{
+      const t=b.querySelector(".pw-p").textContent;
+      b.disabled=true; b.style.opacity=".6";
+      try{
+        const r=await fetch(BACKEND+"/api/checkout",{
+          method:"POST",
+          headers:{ "Content-Type":"application/json", "Authorization":"Bearer "+TOKEN },
+          body: JSON.stringify({ productKey: b.dataset.plan+"_monthly", returnTo:"/app.html" })
+        });
+        const j=await r.json().catch(()=>({}));
+        if(!r.ok||!j.url) throw new Error(j.error||"Indisponible");
+        location.href=j.url;
+      }catch(err){ b.disabled=false; b.style.opacity=""; alert("Paiement indisponible : "+err.message); }
+    }));
+  })();
+
   go.addEventListener("click",async ()=>{
     if(!file.files||!file.files[0]||!bg){ return; }
     if(!TOKEN){ alert("Session expirée, reconnecte-toi."); location.href="auth.html"; return; }
-    if(plan!=="ultimate" && credits!==null && credits < COST){
-      alert("Crédits insuffisants — il faut "+COST+" crédits par génération (solde : "+credits+").");
-      location.href="index.html#pricing"; return;
-    }
+    // Pas de blocage client : le serveur décide (image floutée au 1er essai sans
+    // crédits, puis 402 au 2e essai → redirection Tarifs).
     go.disabled=true; const prev=go.textContent; go.textContent="Amélioration…";
     const editorEl=document.getElementById("editor");
     const pageGen=document.getElementById("pageGen");
@@ -380,9 +452,8 @@
         headers:{ "Authorization":"Bearer "+TOKEN },
         body:fd
       });
-      if(r.status===402){ // crédits épuisés → paywall
-        alert("Crédits insuffisants — recharge ton forfait pour continuer.");
-        location.href="index.html#pricing"; return;
+      if(r.status===402){ // 2e essai sans crédits → redirection directe vers les tarifs
+        location.href="tarifs.html"; return;
       }
       const ct=r.headers.get("content-type")||"";
       if(!(r.ok && ct.indexOf("image/")===0)){
@@ -391,8 +462,9 @@
         alert(msg); return;
       }
       const blob=await r.blob();
-      // affiche le résultat puis rafraîchit le solde (mis à jour côté serveur)
-      showResult(URL.createObjectURL(blob));
+      // X-Locked=1 => aperçu gratuit flouté (1er essai sans crédits)
+      const locked = r.headers.get("X-Locked")==="1";
+      showResult(URL.createObjectURL(blob), locked);
       ok=true;
       loadCredits();
     }catch(err){
