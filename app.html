@@ -88,7 +88,9 @@
   .btn-line{background:#fff;color:var(--text);border:1px solid var(--border)}
   .btn-line:hover{border-color:var(--faint)}
 
-  main{min-height:calc(100vh - 51px);display:flex;flex-direction:column;justify-content:center;padding:40px 0}
+  main{min-height:calc(100vh - 51px);display:block;padding:0 0 60px}
+  /* le bloc d'import occupe (et se centre dans) le 1er écran ; les fonds sont en dessous */
+  .import-screen{min-height:calc(100vh - 51px);display:flex;flex-direction:column;justify-content:center;padding:24px 0}
   .head{text-align:center;max-width:560px;margin:0 auto 30px}
   .head h1{font-weight:700;font-size:clamp(26px,3.6vw,36px);letter-spacing:-.03em;margin-bottom:8px}
   .head h1 .k{color:var(--brand)}
@@ -141,7 +143,7 @@
   .drop:has(.preview.show):hover::after{opacity:1}
 
   /* choix des fonds : vignettes image */
-  .bgpick{margin-top:36px}
+  .bgpick{margin-top:0;scroll-margin-top:76px}
   .bgpick-label{font-size:11.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);display:block;margin-bottom:16px}
   .bgs{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
   .bg{padding:0;border:none;background:none;cursor:pointer;font-family:var(--font)}
@@ -220,6 +222,7 @@
 <main>
   <div class="wrap">
     <div class="tool" id="editor">
+      <div class="import-screen">
       <label class="drop" id="importBtn">
         <input type="file" id="file" accept="image/*" hidden />
         <div class="preview" id="preview"></div>
@@ -233,8 +236,9 @@
           <b>Amélioration en cours…</b>
         </div>
       </label>
+      </div>
 
-      <div class="bgpick">
+      <div class="bgpick" id="bgpick">
         <span class="bgpick-label">Choisis un fond</span>
         <div class="bgs">
           <button class="bg" data-bg="parquet"><span class="bg-thumb" style="background-image:url('backgrounds/parquet.jpg')"><span class="bg-check"><svg viewBox="0 0 24 24" fill="none"><path d="M20 6 9 17l-5-5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="bg-name">Parquet</span></span></button>
@@ -333,6 +337,9 @@
     preview.classList.add("show");
     importLabel.textContent="Changer de photo";
     updateGo();
+    // une fois la photo importée, on descend automatiquement au choix du fond
+    const bgSection=document.getElementById("bgpick");
+    if(bgSection) setTimeout(()=>bgSection.scrollIntoView({behavior:"smooth",block:"start"}),160);
   }
   file.addEventListener("change",render);
   // glisser-déposer sur la zone d'import
